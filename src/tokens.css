@@ -1,0 +1,310 @@
+/* =========================================================================
+   Cymbiotika — Colors & Type Tokens
+   Source: cymbiotika.com live theme (arise-prod.min.css)
+   Typefaces: Neue Haas Grotesk Display Pro (self-hosted) — the ONLY UI face
+   ========================================================================= */
+
+/* ---------- Neue Haas Grotesk Display Pro — self-hosted OTFs ----------
+   IMPORTANT: Neue Haas uses foundry numbering (15/25/35/45/55/65/75/95).
+   We map those to CSS font-weight values chosen for visual hierarchy —
+   our body scale asks for `light 400 / medium 450 / strong 500`, which should
+   feel airy-to-neutral-to-quietly-emphatic. That means:
+     CSS 400 → 45 Light   (the visual "light" body weight)
+     CSS 450 → 55 Roman   (the visual "regular/roman" body weight)
+     CSS 500 → 65 Medium  (the visual "strong" body weight)
+   Using the heavier foundry cuts (75 Bold, 95 Black) at CSS 500 makes everything
+   look bold. Don't.
+   ---------------------------------------------------------------------- */
+
+/* Ultra Thin (15) → CSS 100 */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 100; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-15UltTh.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 100; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-16UltThIt.otf') format('opentype'); font-display: swap; }
+
+/* Thin (25) → CSS 200 */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 200; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-25Th.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 200; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-26ThIt.otf') format('opentype'); font-display: swap; }
+
+/* XLight (35) → CSS 400 — our "Light" token (true airy weight) */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 400; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-35XLt.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 400; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-36XLtIt.otf') format('opentype'); font-display: swap; }
+
+/* Light (45) → CSS 450 — our "Roman" token (medium-light, feels regular) */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 450; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-45Lt.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 450; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-46LtIt.otf') format('opentype'); font-display: swap; }
+
+/* Roman (55) → CSS 500 — our "Medium" token (still mid-weight, reads as emphasis) */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 500; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-55Rg.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 500; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-56It.otf') format('opentype'); font-display: swap; }
+
+/* Medium (65) → CSS 700 — available for UI that needs real bold */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 700; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-65Md.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 700; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-66MdIt.otf') format('opentype'); font-display: swap; }
+
+/* Bold (75) → CSS 800 */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 800; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-75Bd.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 800; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-76BdIt.otf') format('opentype'); font-display: swap; }
+
+/* Black (95) → CSS 900 */
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 900; font-style: normal;
+  src: url('fonts/NHaasGroteskDSPro-95Blk.otf') format('opentype'); font-display: swap; }
+@font-face { font-family: 'Neue Haas Grotesk Display Pro'; font-weight: 900; font-style: italic;
+  src: url('fonts/NHaasGroteskDSPro-96BlkIt.otf') format('opentype'); font-display: swap; }
+
+/* Neue Haas Grotesk Display Pro is self-hosted above. No third-party type imports. */
+
+:root {
+  /* ---------- PRIMARY PALETTE (live site) ---------- */
+  --cym-green:        #173F35;   /* rgb(22 63 53) — primary brand green */
+  --cym-green-legacy: #697E47;   /* rgb(105 126 71) — older olive, still referenced */
+  --cym-accent-green: #C1D0A6;
+  --cym-accent-teal:  #E6EDE9;
+  --cym-off-white:    #FAFAFA;
+  --cym-off-black:    #222222;   /* rgb(34 34 34) — body text color */
+
+  /* ---------- PACKAGING PALETTE ---------- */
+  --pkg-magnesium:       #C1D0A6;
+  --pkg-glutathione:     #005E62;
+  --pkg-vitamin-c:       #C9612E;
+  --pkg-d3:              #EFD383;
+  --pkg-b12:             #8A1E41;
+  --pkg-golden-mind:     #D6D8D1;
+  --pkg-sea-moss:        #004761;
+  --pkg-shilajit:        #202944;
+  --pkg-creatine:        #F19F54;
+  --pkg-super-greens:    #AEB763;
+  --pkg-elderberry:      #824867;
+  --pkg-colostrum:       #B5CDD0;
+  --pkg-nad:             #315ABD;
+  --pkg-beauty-peptide:  #CE63CE;
+  --pkg-topical-mag:     #B4B3DE;
+
+  /* ---------- SEMANTIC SURFACES ---------- */
+  --bg:         var(--cym-off-white);
+  --bg-alt:     var(--cym-accent-teal);
+  --bg-inverse: var(--cym-green);
+  --surface:    #FFFFFF;
+
+  --fg1:        var(--cym-off-black);
+  --fg2:        #5A5F62;
+  --fg3:        #909090;           /* rgb(144 144 144) — disabled text from site */
+  --fg-on-dark: var(--cym-off-white);
+  --fg-brand:   var(--cym-green);
+
+  --border:         rgba(34, 34, 34, 0.12);
+  --border-strong:  rgba(34, 34, 34, 0.24);
+  --border-on-dark: rgba(250, 250, 250, 0.18);
+  --border-disabled:#D9D9D9;       /* rgb(217 217 217) */
+
+  /* ---------- TYPOGRAPHY FAMILIES — Neue Haas is the only typeface ---------- */
+  /* Body / headings / CTAs / labels — Neue Haas Grotesk Display Pro.
+     Self-hosted from /fonts (see @font-face block above). */
+  --font-sans:    'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  /* Aliases — legacy class names (.display / .font-ivy / .serif) still resolve to
+     the canonical face so old files don't break. No serif anywhere. */
+  --font-display: var(--font-sans);
+  --font-serif:   var(--font-sans);
+
+  /* ---------- TRACKING (canonical type spec) ---------- */
+  --tracking-tight:   0em;         /* headings — no negative tracking */
+  --tracking-normal:  0.01em;      /* body default — +1% */
+  --tracking-eyebrow: 1.7px;       /* eyebrows — 12px × ~14% */
+
+  /* ---------- TYPE SCALE (1920-native; responsive) ---------- */
+  --fs-display-xl: clamp(48px, 7vw, 104px);
+  --fs-display:    clamp(40px, 5.2vw, 80px);
+  --fs-h1:         clamp(34px, 3.6vw, 56px);
+  --fs-h2:         clamp(28px, 2.6vw, 40px);
+  --fs-h3:         clamp(22px, 2vw, 28px);
+  --fs-h4:         20px;
+  --fs-body-lg:    18px;
+  --fs-body:       16px;
+  --fs-body-sm:    14px;
+  --fs-eyebrow:    12px;
+  --fs-caption:    11px;
+
+  /* ---------- BODY TEXT TOKENS (canonical spec)
+     Two body sizes × three weights + caption. Weight 450 = Neue Haas "Roman"
+     (browser resolves 450 → 500 face, which is the intended cut). Letter-spacing
+     values are authored percentages converted to em for resolution independence. */
+  /* Body 1 — primary body (18px desktop / 16px mobile) */
+  --body-1-size-desktop:     18px;
+  --body-1-size-mobile:      16px;
+  --body-1-line-height:      1.4;       /* 140% */
+  --body-1-light-weight:     400;
+  --body-1-light-tracking:   0.03em;    /* +3% */
+  --body-1-medium-weight:    450;       /* Roman */
+  --body-1-medium-tracking:  0.01em;    /* +1% */
+  --body-1-strong-weight:    500;
+  --body-1-strong-tracking:  0em;       /* desktop strong is 0, mobile strong is 0.01em */
+
+  /* Body 2 — secondary body (14px desktop + mobile, 16px mobile strong) */
+  --body-2-size:             14px;
+  --body-2-size-mobile-strong: 16px;
+  --body-2-line-height:      1.4;
+  --body-2-light-weight:     400;
+  --body-2-light-tracking:   0.03em;
+  --body-2-medium-weight:    450;
+  --body-2-medium-tracking:  0.01em;
+  --body-2-strong-weight:    500;
+  --body-2-strong-tracking:  0.01em;
+
+  /* ---------- HEADING TOKENS (canonical spec — H1–H3, desktop + mobile) */
+  /* Desktop / Tablet */
+  --h1-size-desktop:     48px;
+  --h1-line-desktop:     1.3;
+  --h1-weight:           400;       /* Light */
+  --h1-tracking-desktop: 0.25px;
+
+  --h2-size-desktop:     36px;
+  --h2-line-desktop:     1.3;
+  --h2-weight:           450;       /* Roman */
+  --h2-tracking-desktop: 0.1px;
+
+  --h3-size-desktop:     24px;
+  --h3-line-desktop:     1.3;
+  --h3-weight:           450;       /* Roman */
+  --h3-tracking-desktop: 0.2px;
+
+  /* Mobile (< 768px) */
+  --h1-size-mobile:      32px;
+  --h1-line-mobile:      1.4;
+  --h1-tracking-mobile:  0.25px;
+
+  --h2-size-mobile:      24px;
+  --h2-line-mobile:      1.3;
+  --h2-tracking-mobile:  0.1px;
+
+  --h3-size-mobile:      20px;
+  --h3-line-mobile:      1.3;
+  --h3-tracking-mobile:  0.2px;
+
+  /* Caption — the smallest body size (legal, metadata, disclosures) */
+  --caption-size:            12px;
+  --caption-line-height:     1.4;
+  --caption-weight:          450;       /* Roman */
+  --caption-tracking:        0.01em;    /* +1% */
+
+  /* Eyebrow — ONE style site-wide */
+  --eyebrow-size:            12px;
+  --eyebrow-line-height:     1.4;
+  --eyebrow-weight:          450;       /* Roman */
+  --eyebrow-tracking:        1.7px;
+  --eyebrow-transform:       uppercase;
+
+  /* Button — ONE style site-wide */
+  --button-size:             16px;
+  --button-line-height:      1.4;
+  --button-weight:           450;       /* Roman */
+  --button-tracking:         0.16px;    /* +1% */
+
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.4;    /* matches site: line-height: 1.4 */
+  --lh-relaxed: 1.65;
+
+  /* ---------- SPACING SCALE (8pt) ---------- */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px; --sp-20: 80px; --sp-24: 96px;
+  --sp-32: 128px;
+
+  /* ---------- RADII ---------- */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-pill: 999px;
+
+  /* ---------- ELEVATION ---------- */
+  --shadow-xs: 0 1px 2px rgba(23, 63, 53, 0.04);
+  --shadow-sm: 0 2px 8px rgba(23, 63, 53, 0.06);
+  --shadow-md: 0 8px 24px rgba(23, 63, 53, 0.08);
+  --shadow-lg: 0 24px 60px rgba(23, 63, 53, 0.12);
+
+  /* ---------- MOTION ---------- */
+  --ease-out:     cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:     150ms;
+  --dur-base:     200ms;  /* matches site button transition-duration */
+  --dur-slow:     500ms;
+}
+
+/* ---------- BASE ELEMENTS ---------- */
+
+html, body {
+  background: var(--bg);
+  color: var(--fg1);
+  font-family: var(--font-sans);    /* neue-haas-grotesk-display — live site body */
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--tracking-tight);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Legacy .display class — aliased to H1 (no separate display size in canonical system) */
+.display,
+h1.display {
+  font-family: var(--font-sans);
+  font-weight: 400;                    /* Light */
+  font-size: var(--fs-h1);
+  line-height: 1.3;
+  letter-spacing: 0.25px;
+  font-kerning: none;
+}
+
+/* Headings — canonical: Light 400 / Roman 450, tight letter-spacing in px */
+h1 { font-family: var(--font-sans); font-weight: 400; font-size: var(--fs-h1); line-height: 1.3; letter-spacing: 0.25px; margin: 0; color: var(--fg1); font-kerning: none; }
+h2 { font-family: var(--font-sans); font-weight: 450; font-size: var(--fs-h2); line-height: 1.3; letter-spacing: 0.1px;  margin: 0; color: var(--fg1); font-kerning: none; }
+h3 { font-family: var(--font-sans); font-weight: 450; font-size: var(--fs-h3); line-height: 1.3; letter-spacing: 0.2px;  margin: 0; color: var(--fg1); font-kerning: none; }
+h4 { font-family: var(--font-sans); font-weight: 500; font-size: var(--fs-h4); line-height: 1.4; letter-spacing: 0.18px; margin: 0; color: var(--fg1); font-kerning: none; }
+
+p  { font-family: var(--font-sans); font-weight: 450; font-size: var(--fs-body); line-height: 1.4; letter-spacing: 0.01em; color: var(--fg1); margin: 0 0 var(--sp-4); font-kerning: none; }
+
+/* Legacy .font-ivy / .serif helpers — now resolve to Neue Haas Light (no serif anywhere) */
+.font-ivy, .serif { font-family: var(--font-sans); font-weight: 400; font-kerning: none; }
+/* Neue Haas helper — primary face Medium cut */
+.font-nhaas, .display-sans { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0.18px; font-kerning: none; }
+
+/* Eyebrow / subhead — canonical: Roman 450, 12px, 1.7px tracking, UPPERCASE */
+.eyebrow,
+.subhead {
+  font-family: var(--font-sans);
+  font-weight: 450;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: var(--fg1);
+  font-kerning: none;
+}
+.eyebrow--heavy,
+.subhead--heavy { font-weight: 500; }
+
+small, .caption {
+  font-size: var(--fs-caption);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg2);
+}
+
+a { color: var(--fg-brand); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { opacity: 0.7; }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: var(--sp-8) 0; }
+
+/* Utility inverse for dark surfaces */
+.on-dark { color: var(--fg-on-dark); }
+.on-dark a { color: var(--cym-accent-green); }
