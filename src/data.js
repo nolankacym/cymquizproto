@@ -72,7 +72,7 @@ window.BASICS = [
   },
   {
     id: "experience",
-    title: "How would you describe your supplement experience?",
+    title: "Where are you in your supplement journey?",
     multi: false,
     options: [
       "Just getting started",
@@ -147,7 +147,7 @@ window.BASICS = [
 window.CONDITIONALS = {
   "cond-stress": {
     id: "cond-stress",
-    title: "Which of these sound most like you?",
+    title: "What does your stress or sleep pattern feel like most often?",
     caption: "Stress, sleep + mood",
     multi: false,
     options: [
@@ -160,7 +160,7 @@ window.CONDITIONALS = {
   },
   "cond-gut": {
     id: "cond-gut",
-    title: "Which of these sound most like you?",
+    title: "What kind of digestive support feels most relevant?",
     caption: "Gut health + comfort",
     multi: false,
     options: [
@@ -174,7 +174,7 @@ window.CONDITIONALS = {
   },
   "cond-energy": {
     id: "cond-energy",
-    title: "When do you feel it most?",
+    title: "When do you notice your energy or focus dip most?",
     caption: "Energy + focus",
     multi: false,
     options: [
@@ -188,7 +188,7 @@ window.CONDITIONALS = {
   },
   "cond-beauty": {
     id: "cond-beauty",
-    title: "What matters most to you here?",
+    title: "What kind of radiance are you focused on building?",
     caption: "Beauty, aging + longevity",
     multi: false,
     options: [
@@ -202,7 +202,7 @@ window.CONDITIONALS = {
   },
   "cond-other": {
     id: "cond-other",
-    title: "Anything else shaping your wellness right now?",
+    title: "Is there a current life stage or wellness context we should consider?",
     caption: "Overall wellness + immunity",
     multi: false,
     options: [

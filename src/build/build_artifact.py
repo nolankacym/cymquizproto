@@ -42,7 +42,8 @@ quiz_css = read(os.path.join(Q, "quiz.css"))
 react_js = read(os.path.join(B, "react.min.js"))
 react_dom_js = read(os.path.join(B, "react-dom.min.js"))
 
-html = f"""<style>
+# Body-level content shared by both outputs.
+body = f"""<style>
 {font_faces}
 {quiz_css}
 </style>
@@ -54,10 +55,30 @@ html = f"""<style>
 <script>{app_js}</script>
 """
 
-out = os.path.join(B, "quiz-artifact.html")
-open(out, "w", encoding="utf-8").write(html)
-print(f"wrote {out}  ({len(html)/1024:.0f} KB)")
-"""verify structure"""
+# 1) Body-only — for the Claude Artifact tool (it adds its own <head>/viewport).
+out_artifact = os.path.join(B, "quiz-artifact.html")
+open(out_artifact, "w", encoding="utf-8").write(body)
+
+# 2) Full standalone document — for GitHub Pages / any static host.
+#    MUST include <meta viewport> or mobile browsers render at desktop width.
+standalone = f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#163f35">
+<title>Cymbiotika Wellness Quiz</title>
+</head>
+<body>
+{body}</body>
+</html>
+"""
+out_standalone = os.path.join(B, "quiz-standalone.html")
+open(out_standalone, "w", encoding="utf-8").write(standalone)
+
+print(f"wrote {out_artifact}  ({len(body)/1024:.0f} KB, body-only for Claude Artifact)")
+print(f"wrote {out_standalone}  ({len(standalone)/1024:.0f} KB, full doc for GitHub Pages)")
 for tag in ["window.__ARTIFACT__", "ReactDOM", "window.BASICS", "React.createElement", "@font-face"]:
-    print(f"  contains {tag!r}:", tag in html)
-print("  remaining bare 'assets/' refs:", html.count('assets/'))
+    print(f"  contains {tag!r}:", tag in standalone)
+print("  viewport meta present:", 'name="viewport"' in standalone)
+print("  remaining bare 'assets/' refs:", standalone.count('assets/'))
