@@ -1096,6 +1096,25 @@ const {
    server, so quiz/feedback submissions are skipped (kept fully in-browser). */
 const ARTIFACT = typeof window !== "undefined" && !!window.__ARTIFACT__;
 
+/* When hosted statically (e.g. GitHub Pages), submissions are POSTed to a
+   Google Apps Script Web App that appends them to the Google Sheet. Set via
+   window.__SHEET_ENDPOINT__ in the page. Empty = no sheet (local/artifact). */
+const SHEET_ENDPOINT = typeof window !== "undefined" && window.__SHEET_ENDPOINT__ || "";
+
+/* Fire-and-forget POST to the Apps Script endpoint. Uses no-cors + text/plain
+   so the browser sends a "simple" request (no CORS preflight, which Apps Script
+   doesn't answer). The response is opaque, so success = the request resolved. */
+function sendToSheet(payload) {
+  return fetch(SHEET_ENDPOINT, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(payload)
+  });
+}
+
 /* ------------------------------- icons ------------------------------- */
 const I = {
   chevronLeft: (s = 24) => /*#__PURE__*/React.createElement("svg", {
@@ -2092,9 +2111,18 @@ function App() {
   }
   function finishQuiz() {
     setStage("complete");
-    if (ARTIFACT) return; // standalone/artifact build has no server — skip saving
+    const row = buildResponseRow();
+    if (SHEET_ENDPOINT) {
+      // hosted: append to the Google Sheet
+      setRespSave("saving");
+      sendToSheet(Object.assign({
+        type: "response"
+      }, row)).then(() => setRespSave("saved")).catch(() => setRespSave("error"));
+      return;
+    }
+    if (ARTIFACT) return; // no server and no sheet — skip
     setRespSave("saving");
-    postJSON("/api/submit", buildResponseRow()).then(r => setRespSave(r && r.ok ? "saved" : "error")).catch(() => setRespSave("error"));
+    postJSON("/api/submit", row).then(r => setRespSave(r && r.ok ? "saved" : "error")).catch(() => setRespSave("error"));
   }
   function goNext() {
     if (idx + 1 >= questions.length) finishQuiz();else setIdx(idx + 1);
@@ -2103,6 +2131,26 @@ function App() {
     if (idx > 0) setIdx(idx - 1);
   }
   function submitFeedback(fb) {
+    const payload = {
+      submission_id: idRef.current,
+      timestamp: new Date().toISOString(),
+      name: name,
+      rating: fb.rating,
+      ease: fb.ease,
+      comment: fb.comment
+    };
+    if (SHEET_ENDPOINT) {
+      // hosted: append feedback to the Google Sheet
+      setFbSubmitting(true);
+      setFbSave("saving");
+      sendToSheet(Object.assign({
+        type: "feedback"
+      }, payload)).then(() => setFbSave("saved")).catch(() => setFbSave("error")).then(() => {
+        setFbSubmitting(false);
+        setStage("thanks");
+      });
+      return;
+    }
     if (ARTIFACT) {
       setFbSave("saved");
       setStage("thanks");
@@ -2110,14 +2158,7 @@ function App() {
     }
     setFbSubmitting(true);
     setFbSave("saving");
-    postJSON("/api/feedback", {
-      submission_id: idRef.current,
-      timestamp: new Date().toISOString(),
-      name: name,
-      rating: fb.rating,
-      ease: fb.ease,
-      comment: fb.comment
-    }).then(r => setFbSave(r && r.ok ? "saved" : "error")).catch(() => setFbSave("error")).then(() => {
+    postJSON("/api/feedback", payload).then(r => setFbSave(r && r.ok ? "saved" : "error")).catch(() => setFbSave("error")).then(() => {
       setFbSubmitting(false);
       setStage("thanks");
     });

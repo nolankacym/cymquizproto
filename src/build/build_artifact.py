@@ -59,6 +59,12 @@ body = f"""<style>
 out_artifact = os.path.join(B, "quiz-artifact.html")
 open(out_artifact, "w", encoding="utf-8").write(body)
 
+# Optional Google Apps Script endpoint (GitHub Pages -> Google Sheet).
+# Put the deployed Web app URL in quiz/sheet-endpoint.txt to enable capture.
+endpoint_file = os.path.join(Q, "sheet-endpoint.txt")
+endpoint = read(endpoint_file).strip() if os.path.exists(endpoint_file) else ""
+endpoint_script = f'<script>window.__SHEET_ENDPOINT__ = {endpoint!r};</script>\n' if endpoint else ""
+
 # 2) Full standalone document — for GitHub Pages / any static host.
 #    MUST include <meta viewport> or mobile browsers render at desktop width.
 standalone = f"""<!doctype html>
@@ -68,7 +74,7 @@ standalone = f"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#163f35">
 <title>Cymbiotika Wellness Quiz</title>
-</head>
+{endpoint_script}</head>
 <body>
 {body}</body>
 </html>

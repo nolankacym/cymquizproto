@@ -41,7 +41,16 @@ the repo root as `index.html`.
 
 ## Note on data capture
 
-GitHub Pages is static‑only — there is no backend, so the hosted page runs in
-"artifact mode" (`window.__ARTIFACT__ = true`) and **does not save responses**.
-To capture responses from the hosted version, point the submit calls at a
-form/endpoint service (e.g. Formspree, or a Google Apps Script web app).
+GitHub Pages is static‑only — there is no backend. To capture responses into a
+Google Sheet, the page POSTs to a **Google Apps Script Web App** bound to the
+sheet (`src/google-apps-script.gs`):
+
+1. Open the target Google Sheet → **Extensions → Apps Script**.
+2. Paste `src/google-apps-script.gs`, then **Deploy → New deployment → Web app**
+   (Execute as: *Me*, Who has access: *Anyone*). Copy the `…/exec` URL.
+3. Put that URL in **`sheet-endpoint.txt`** at the repo root, rebuild the page
+   (`python3 src/build/build_artifact.py`), and copy `quiz-standalone.html` to
+   `index.html`. The script writes to **Responses** and **Feedback** tabs.
+
+If `sheet-endpoint.txt` is absent, the page runs in "artifact mode"
+(`window.__ARTIFACT__ = true`) and simply doesn't save.
