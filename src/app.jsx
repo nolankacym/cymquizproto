@@ -121,51 +121,14 @@ function makeId() {
 }
 
 /* ------------------------------- Header ------------------------------ */
+/* Minimal header for all breakpoints: promo banner + centered wordmark. */
 function Header() {
-  const links = ["Shop Best Sellers", "Shop by Benefit", "Learn", "Subscribe and Save"];
-  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header>
       <div className="promo-banner">20% off + Free Shipping with code GIFT</div>
-      <div className="hdr">
-        <div className="hdr-left">
-          <img className="hdr-wordmark" src="assets/wordmark-dark.svg" alt="Cymbiotika" />
-          <nav className="hdr-nav">
-            {links.map((l) => <button key={l} className="hdr-link">{l}</button>)}
-          </nav>
-        </div>
-        <div className="hdr-actions">
-          <div className="hdr-cta">
-            <button className="btn btn-primary">Shop All</button>
-            <button className="btn btn-outline hdr-cta-quiz">Take the Quiz</button>
-          </div>
-          <div className="hdr-icons">
-            <span className="hdr-icon hdr-flag" title="United States">
-              <svg width="24" height="24" viewBox="0 0 24 24"><rect width="24" height="24" fill="#b22234" /><rect width="24" height="1.85" y="1.85" fill="#fff" /><rect width="24" height="1.85" y="5.5" fill="#fff" /><rect width="24" height="1.85" y="9.2" fill="#fff" /><rect width="10" height="9.2" fill="#3c3b6e" /></svg>
-            </span>
-            <span className="hdr-icon">{I.search()}</span>
-            <span className="hdr-icon hdr-user">{I.user()}</span>
-            <span className="hdr-icon">{I.bag()}<span className="hdr-bag-count">1</span></span>
-          </div>
-          <button
-            className={"hdr-burger" + (menuOpen ? " is-open" : "")}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            {menuOpen ? I.close() : I.hamburger()}
-          </button>
-        </div>
+      <div className="hdr hdr--center">
+        <img className="hdr-wordmark" src="assets/wordmark-dark.svg" alt="Cymbiotika" />
       </div>
-      {menuOpen && (
-        <nav className="hdr-menu" onClick={() => setMenuOpen(false)}>
-          {links.map((l) => <button key={l} className="hdr-menu-link">{l}</button>)}
-          <div className="hdr-menu-cta">
-            <button className="btn btn-primary" style={{ width: "100%" }}>Shop All</button>
-            <button className="btn btn-outline" style={{ width: "100%" }}>Take the Quiz</button>
-          </div>
-        </nav>
-      )}
     </header>
   );
 }

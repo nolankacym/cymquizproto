@@ -75,6 +75,7 @@ html, body {
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-5);
 }
+.hdr--center { justify-content: center; } /* promo + centered wordmark only */
 .hdr-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .hdr-wordmark { height: 16px; width: auto; display: block; }
 .hdr-nav { display: flex; align-items: center; gap: 12px; }
@@ -213,9 +214,9 @@ html, body {
 }
 .q-option:hover { border-color: var(--q-green); }
 .q-option.is-selected {
-  border-color: var(--q-green);
-  background: rgba(22,63,53,.04);
-  box-shadow: inset 0 0 0 1px var(--q-green);
+  border-color: #9cc8db;
+  background: #DCEEF5;
+  box-shadow: inset 0 0 0 1px #9cc8db;
 }
 
 .q-next { width: 100%; }
@@ -350,7 +351,6 @@ html, body {
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2); }
-  .hdr-wordmark { height: 13px; }
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }

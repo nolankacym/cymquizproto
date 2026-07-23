@@ -90,6 +90,7 @@ html, body {
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-5);
 }
+.hdr--center { justify-content: center; } /* promo + centered wordmark only */
 .hdr-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .hdr-wordmark { height: 16px; width: auto; display: block; }
 .hdr-nav { display: flex; align-items: center; gap: 12px; }
@@ -228,9 +229,9 @@ html, body {
 }
 .q-option:hover { border-color: var(--q-green); }
 .q-option.is-selected {
-  border-color: var(--q-green);
-  background: rgba(22,63,53,.04);
-  box-shadow: inset 0 0 0 1px var(--q-green);
+  border-color: #9cc8db;
+  background: #DCEEF5;
+  box-shadow: inset 0 0 0 1px #9cc8db;
 }
 
 .q-next { width: 100%; }
@@ -365,7 +366,6 @@ html, body {
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2); }
-  .hdr-wordmark { height: 13px; }
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }
@@ -1369,96 +1369,17 @@ function makeId() {
 }
 
 /* ------------------------------- Header ------------------------------ */
+/* Minimal header for all breakpoints: promo banner + centered wordmark. */
 function Header() {
-  const links = ["Shop Best Sellers", "Shop by Benefit", "Learn", "Subscribe and Save"];
-  const [menuOpen, setMenuOpen] = useState(false);
   return /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("div", {
     className: "promo-banner"
   }, "20% off + Free Shipping with code GIFT"), /*#__PURE__*/React.createElement("div", {
-    className: "hdr"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hdr-left"
+    className: "hdr hdr--center"
   }, /*#__PURE__*/React.createElement("img", {
     className: "hdr-wordmark",
     src: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTU5Ljg5NCIgaGVpZ2h0PSIxNi4wMDEzIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgdmlld0JveD0iMCAwIDE1OS44OTQgMTYuMDAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IlZlY3RvciI+CjxwYXRoIGQ9Ik0yNC4zNTI3IDcuMjAwNDZIMjQuNTEwOEwyOS42MzY5IDAuMzIwMzQzQzI5Ljg0ODUgMC4wMjc2ODM5IDI5Ljk1NDMgMCAzMC4yNzE3IDBIMzIuMjc5NkMzMi4zODU0IDAgMzIuNDM3NiAwLjA4MDQxNTMgMzIuNDM3NiAwLjE1OTUxMkMzMi40Mzc2IDAuMjEyMjQ0IDMyLjQxMTUgMC4yNjYyOTMgMzIuMzMxOCAwLjM3MzA3NEwyNS41OTM3IDkuMzA1NzZWMTUuNjc5N0MyNS41OTM3IDE1LjgzOTIgMjUuNDM1NyAxNiAyNS4yNzYzIDE2SDIzLjU4NDZDMjMuNDI2NSAxNiAyMy4yNjcyIDE1Ljg0MDUgMjMuMjY3MiAxNS42Nzk3VjkuMzA1NzZMMTYuNTMwNCAwLjM3NDM5MkMxNi40NTA3IDAuMjY3NjExIDE2LjQyNDYgMC4yMTQ4OCAxNi40MjQ2IDAuMTYwODMxQzE2LjQyNDYgMC4wODA0MTUzIDE2LjQ3NjggMC4wMDEzMTgyOCAxNi41ODI2IDAuMDAxMzE4MjhIMTguNTkwNUMxOC45MDc5IDAuMDAxMzE4MjggMTkuMDEzNyAwLjAyNzY4MzkgMTkuMjI1NCAwLjMyMTY2MUwyNC4zNTE0IDcuMjAxNzhMMjQuMzUyNyA3LjIwMDQ2WiIgZmlsbD0iIzE2M0YzNSIvPgo8cGF0aCBkPSJNNDMuOTc2NSAxMy45NzM4TDM3LjM0NDIgNC4xMzQxM1YxNS42ODFDMzcuMzQ0MiAxNS44NTYzIDM3LjIwMTggMTYuMDAxMyAzNy4wMjY4IDE2LjAwMTNIMzUuMzM1MUMzNS4xNjEzIDE2LjAwMTMgMzUuMDE3NiAxNS44NTc2IDM1LjAxNzYgMTUuNjgxVjAuMzIwMzQzQzM1LjAxNzYgMC4xNDM2OTMgMzUuMTYgMCAzNS4zMzUxIDBIMzYuNDE4QzM2LjYwMjIgMCAzNi43ODc3IDAuMDgwNDE1MiAzNi45MTk3IDAuMjY2MjkzTDQzLjk0NzggMTAuMzQ1OUg0NEw1MS4wMzIgMC4yNjYyOTNDNTEuMTY0IDAuMDgwNDE1MiA1MS4zNDk1IDAgNTEuNTMzNyAwSDUyLjYxNjZDNTIuNzkwNCAwIDUyLjkzNCAwLjE0MzY5MyA1Mi45MzQgMC4zMjAzNDNWMTUuNjc5N0M1Mi45MzQgMTUuODU1IDUyLjc5MTcgMTYgNTIuNjE2NiAxNkg1MC45MjQ5QzUwLjc1MTIgMTYgNTAuNjA3NSAxNS44NTYzIDUwLjYwNzUgMTUuNjc5N1Y0LjEzNDEzTDQ0LjIzNzggMTMuNTc4M0M0NC4xMTI0IDEzLjc2NjggNDMuODM2NyAxMy43NjY4IDQzLjcxMTMgMTMuNTc4M0wzNy4zNDE2IDQuMTM0MTNMNDMuOTc2NSAxMy45NzM4WiIgZmlsbD0iIzE2M0YzNSIvPgo8cGF0aCBkPSJNNTguNDkyNSAxNkM1OC4zMzQ0IDE2IDU4LjE3NTEgMTUuODQwNSA1OC4xNzUxIDE1LjY3OTdWMC4zMjAzNDNDNTguMTc1MSAwLjE2MDgzMSA1OC4zMzMxIDAgNTguNDkyNSAwSDY1LjkxNzdDNjkuNDU5MiAwIDcxLjMwNzcgMS44MTI2NCA3MS4zMDc3IDQuMjkzNjVDNzEuMzA3NyA1LjY4MDQ4IDcwLjc3OTkgNi42OTI5MiA2OS44NTUgNy40MTQwMlY3LjQ2Njc1QzcxLjE3NTcgOC4yNDA1OSA3MS45Njg3IDkuNTQ3IDcxLjk2ODcgMTEuMjc5MkM3MS45Njg3IDE0LjM0NTYgNjkuNzc1MyAxNS45OTg3IDY2LjA0OTcgMTUuOTk4N0g1OC40OTI1VjE2Wk02MC41MDAzIDIuMDI3NTJWNi41ODc0Nkg2Ni4zOTMyQzY4LjUzNDMgNi41ODc0NiA2OC45ODI0IDUuNjAxMzggNjguOTgyNCA0LjI5NDk3QzY4Ljk4MjQgMi45ODg1NSA2OC4yMTU2IDIuMDI4ODQgNjUuODY0MiAyLjAyODg0SDYwLjUwMDNWMi4wMjc1MlpNNjUuOTk2MSAxMy45NzM4QzY4LjUzMyAxMy45NzM4IDY5LjY0MjEgMTMuMDY2OCA2OS42NDIxIDExLjI4MDVDNjkuNjQyMSA5LjQ5NDI3IDY4LjUwNTYgOC42MTM2NiA2NS45OTYxIDguNjEzNjZINjAuNTAwM1YxMy45NzM4SDY1Ljk5NjFaIiBmaWxsPSIjMTYzRjM1Ii8+CjxwYXRoIGQ9Ik03OC4wNTM2IDE1LjY3OTdDNzguMDUzNiAxNS44MzkyIDc3Ljg5NTUgMTYgNzcuNzM2MiAxNkg3Ni4wNDQ0Qzc1Ljg4NjQgMTYgNzUuNzI3IDE1Ljg0MDUgNzUuNzI3IDE1LjY3OTdWMC4zMjAzNDNDNzUuNzI3IDAuMTYwODMxIDc1Ljg4NTEgMCA3Ni4wNDQ0IDBINzcuNzM2MkM3Ny44OTQyIDAgNzguMDUzNiAwLjE1OTUxMiA3OC4wNTM2IDAuMzIwMzQzVjE1LjY3OTdaIiBmaWxsPSIjMTYzRjM1Ii8+CjxwYXRoIGQ9Ik05OS4xODYyIDcuOTk5MzRDOTkuMTg2MiAxMy4wMDQ5IDk1LjQ3ODggMTUuOTk4NyA5MC45MDE0IDE1Ljk5ODdDODYuMzI0IDE1Ljk5ODcgODIuNjE2NiAxMy4wMDYyIDgyLjYxNjYgNy45OTkzNEM4Mi42MTY2IDIuOTkyNSA4Ni4zNTAxIDAgOTAuOTAxNCAwQzk1LjQ1MjcgMCA5OS4xODYyIDIuOTkyNSA5OS4xODYyIDcuOTk5MzRaTTg0Ljg2NjEgNy45OTkzNEM4NC44NjYxIDExLjc2NyA4Ny42MDE2IDE0LjAzNzEgOTAuOTAxNCAxNC4wMzcxQzk0LjIwMTIgMTQuMDM3MSA5Ni45MzU0IDExLjc2NTcgOTYuOTM1NCA3Ljk5OTM0Qzk2LjkzNTQgNC4yMzMwMSA5NC4yNzU3IDEuOTYwMjkgOTAuOTAxNCAxLjk2MDI5Qzg3LjUyNzEgMS45NjAyOSA4NC44NjYxIDQuMTc4OTYgODQuODY2MSA3Ljk5OTM0WiIgZmlsbD0iIzE2M0YzNSIvPgo8cGF0aCBkPSJNMTAwLjU2NCAxLjY1MzEzVjAuMzc0MzkyQzEwMC41NjQgMC4yMTQ4OCAxMDAuNzc2IDAuMDAxMzE4MjggMTAwLjkzNCAwLjAwMTMxODI4SDExMy43MDJDMTEzLjg2IDAuMDAxMzE4MjggMTE0LjA3MiAwLjIxNDg4IDExNC4wNzIgMC4zNzQzOTJWMS42NTQ0NUMxMTQuMDcyIDEuODEzOTYgMTEzLjg2IDIuMDI3NTIgMTEzLjcwMiAyLjAyNzUySDEwOC40ODFWMTUuNjc5N0MxMDguNDgxIDE1LjgzOTIgMTA4LjMyMyAxNiAxMDguMTYzIDE2SDEwNi40NzJDMTA2LjMxNCAxNiAxMDYuMTU0IDE1Ljg0MDUgMTA2LjE1NCAxNS42Nzk3VjIuMDI3NTJIMTAwLjkzM0MxMDAuNzc1IDIuMDI3NTIgMTAwLjU2MyAxLjgxMzk2IDEwMC41NjMgMS42NTQ0NUwxMDAuNTY0IDEuNjUzMTNaIiBmaWxsPSIjMTYzRjM1Ii8+CjxwYXRoIGQ9Ik0xMTkuODkzIDE1LjY3OTdDMTE5Ljg5MyAxNS44MzkyIDExOS43MzUgMTYgMTE5LjU3NSAxNkgxMTcuODg0QzExNy43MjYgMTYgMTE3LjU2NiAxNS44NDA1IDExNy41NjYgMTUuNjc5N1YwLjMyMDM0M0MxMTcuNTY2IDAuMTYwODMxIDExNy43MjQgMCAxMTcuODg0IDBIMTE5LjU3NUMxMTkuNzM0IDAgMTE5Ljg5MyAwLjE1OTUxMiAxMTkuODkzIDAuMzIwMzQzVjE1LjY3OTdaIiBmaWxsPSIjMTYzRjM1Ii8+CjxwYXRoIGQ9Ik0xMzYuNTcyIDAuMjM5OTI4QzEzNi44MSAwLjAyNjM2NTcgMTM2Ljk0MiAwIDEzNy4yMDYgMEgxMzkuNTMxQzEzOS42MzcgMCAxMzkuNjg5IDAuMDgwNDE1MyAxMzkuNjg5IDAuMTMzMTQ3QzEzOS42ODkgMC4xODU4NzggMTM5LjY2MyAwLjIzOTkyNyAxMzkuNTA1IDAuMzczMDc0TDEzMS43NjIgNy4xNzI3OEwxMzkuOTggMTUuNTcyOUMxNDAuMDYgMTUuNjUzMyAxNDAuMTEyIDE1LjcwNiAxNDAuMTEyIDE1LjgxMjhDMTQwLjExMiAxNS44OTE5IDE0MC4wNiAxNS45OTg3IDEzOS44NzUgMTUuOTk4N0gxMzcuNjI5QzEzNy4zOTEgMTUuOTk4NyAxMzcuMjMzIDE1Ljk3MjMgMTM3LjA0OCAxNS43ODUxTDEzMC4wNzIgOC42NjUwN0wxMjcuNDU1IDEwLjk4NTNWMTUuNjc4M0MxMjcuNDU1IDE1LjgzNzkgMTI3LjI5NyAxNS45OTg3IDEyNy4xMzggMTUuOTk4N0gxMjUuNDQ2QzEyNS4yODggMTUuOTk4NyAxMjUuMTI5IDE1LjgzOTIgMTI1LjEyOSAxNS42NzgzVjAuMzIwMzQzQzEyNS4xMjkgMC4xNjA4MzEgMTI1LjI4NyAwIDEyNS40NDYgMEgxMjcuMTM4QzEyNy4yOTYgMCAxMjcuNDU1IDAuMTU5NTEyIDEyNy40NTUgMC4zMjAzNDNWOC4zNzI0MUgxMjcuNTA4TDEzNi41NzIgMC4yMzk5MjhaIiBmaWxsPSIjMTYzRjM1Ii8+CjxwYXRoIGQ9Ik0xNTQuMDk5IDEyLjY5MzdIMTQ1LjNMMTQzLjg0NyAxNS42NTMzQzE0My42NjIgMTYgMTQzLjYwOSAxNiAxNDMuMjkyIDE2SDE0MS41NzRDMTQxLjQxNiAxNiAxNDEuMzM2IDE1Ljg5MzIgMTQxLjMzNiAxNS44MTQxQzE0MS4zMzYgMTUuNzM1IDE0MS40MTYgMTUuNjAwNiAxNDEuNDY4IDE1LjQ5MzhMMTQ5LjE1IDAuMTc2NjVDMTQ5LjIwMyAwLjA2ODU1MDcgMTQ5LjMxMyAwLjAwMTMxODI4IDE0OS40MzMgMC4wMDEzMTgyOEgxNDkuOTk1QzE1MC4xMTUgMC4wMDEzMTgyOCAxNTAuMjIzIDAuMDY5ODY5IDE1MC4yNzggMC4xNzY2NUwxNTcuOTU4IDE1LjQ5MzhDMTU4LjAxMiAxNS42MDA2IDE1OC4wOSAxNS43MzM3IDE1OC4wOSAxNS44MTQxQzE1OC4wOSAxNS44OTQ1IDE1OC4wMSAxNiAxNTcuODUyIDE2SDE1Ni4xMzVDMTU1LjgxNyAxNiAxNTUuNzY1IDE2IDE1NS41NzkgMTUuNjUzM0wxNTQuMDk5IDEyLjY5MzdaTTE0OS43OTIgMy40NjcwOEgxNDkuNjM0TDE0Ni4zMDQgMTAuNjY2MkgxNTMuMDk1TDE0OS43OTIgMy40NjcwOFoiIGZpbGw9IiMxNjNGMzUiLz4KPHBhdGggZD0iTTEyLjgzODcgMy40MDI0OUMxMi43MjExIDMuNTIxMTMgMTIuNTMxNyAzLjUyNzcyIDEyLjQwNjMgMy40MTY5OUMxMS4zMzM4IDIuNDc0NDIgOS44ODc2NiAxLjk3MDgzIDguMjc4MjUgMS45NzA4M0M0Ljk4MTA2IDEuOTcwODMgMi4yNDY5IDQuMTg4MTggMi4yNDY5IDguMDA1OTNDMi4yNDY5IDExLjgyMzcgNC45ODEwNiAxNC4wMzk3IDguMjc4MjUgMTQuMDM5N0M5Ljg3ODUxIDE0LjAzOTcgMTEuMzI1OSAxMy41MjE2IDEyLjQwMjQgMTIuNTY5OEMxMi41Mjc4IDEyLjQ1OTEgMTIuNzE3MiAxMi40NjMgMTIuODM2MSAxMi41ODNMMTMuODg1IDEzLjY0MTZDMTQuMDE3IDEzLjc3NDcgMTQuMDA3OCAxMy45OTQ5IDEzLjg2NDEgMTQuMTE0OUMxMi4zOTE5IDE1LjMzNjkgMTAuNDMyNCAxNiA4LjI3OTU2IDE2QzMuNzMwOSAxNiAwIDEzLjAwODggMCA4LjAwNTkzQzAgMy4wMDMwNSAzLjcyOTU5IDAuMDEwNTQ2MyA4LjI3ODI1IDAuMDEwNTQ2M0MxMC40MzM3IDAuMDEwNTQ2MyAxMi4zODggMC42NjcwNTEgMTMuODU1IDEuODgxMTlDMTQgMi4wMDExNSAxNC4wMDkxIDIuMjIxMzEgMTMuODc3MiAyLjM1NTc3TDEyLjgzODcgMy40MDM4MVYzLjQwMjQ5WiIgZmlsbD0iIzE2M0YzNSIvPgo8cGF0aCBkPSJNOC4yNjkxMSAxMC40OTIyQzkuNjQzNTEgMTAuNDkyMiAxMC43NTc3IDkuMzY3ODUgMTAuNzU3NyA3Ljk4MDg4QzEwLjc1NzcgNi41OTM5MiA5LjY0MzUxIDUuNDY5NTYgOC4yNjkxMSA1LjQ2OTU2QzYuODk0NzEgNS40Njk1NiA1Ljc4MDU0IDYuNTkzOTIgNS43ODA1NCA3Ljk4MDg4QzUuNzgwNTQgOS4zNjc4NSA2Ljg5NDcxIDEwLjQ5MjIgOC4yNjkxMSAxMC40OTIyWiIgZmlsbD0iIzE2M0YzNSIvPgo8cGF0aCBkPSJNMTU4LjA2OSAwQzE1OS4wNzkgMCAxNTkuODk0IDAuODIxMjkgMTU5Ljg5NCAxLjg0MDMyQzE1OS44OTQgMi44NTkzNiAxNTkuMDggMy42ODA2NSAxNTguMDcxIDMuNjgwNjVDMTU3LjA2MSAzLjY4MDY1IDE1Ni4yNDcgMi44NTkzNiAxNTYuMjQ3IDEuODQwMzJDMTU2LjI0NyAwLjgyMTI5IDE1Ny4wNTkgMCAxNTguMDY5IDBaTTE1OC4wNjkgMy4zMjczNUMxNTguODkgMy4zMjczNSAxNTkuNTQyIDIuNjc2MTEgMTU5LjU0MiAxLjg0MTY0QzE1OS41NDIgMS4wMDcxNyAxNTguODkgMC4zNTU5MzYgMTU4LjA2OSAwLjM1NTkzNkMxNTcuMjQ5IDAuMzU1OTM2IDE1Ni41OTcgMS4wMTM3NiAxNTYuNTk3IDEuODQxNjRDMTU2LjU5NyAyLjY2OTUyIDE1Ny4yNDIgMy4zMjczNSAxNTguMDY5IDMuMzI3MzVaTTE1OC40NTMgMi4wOTczOVYyLjExNzE2QzE1OC40NTMgMi4xMTcxNiAxNTguNTI1IDIuMTY5ODkgMTU4LjU5MSAyLjI1NTU4TDE1OC45MTYgMi42NDk3NVYyLjY3NjExSDE1OC41MTJMMTU4LjA4OSAyLjE1NjcxSDE1Ny43MDVWMi42NzYxMUgxNTcuMzUzVjAuOTY2MzAxSDE1OC4xOTNDMTU4LjYwNCAwLjk2NjMwMSAxNTguODg0IDEuMjAzNTkgMTU4Ljg4NCAxLjU2NDhDMTU4Ljg4NCAxLjg2MDEgMTU4LjY4OSAyLjAxMTcgMTU4LjQ1NSAyLjA5NzM5SDE1OC40NTNaTTE1Ny43MDUgMS4yNjI5MVYxLjg2MTQySDE1OC4xNDhDMTU4LjM4OSAxLjg2MTQyIDE1OC41MzIgMS43NjI1NCAxNTguNTMyIDEuNTY2MTJDMTU4LjUzMiAxLjM4MTU2IDE1OC40MDggMS4yNjQyMyAxNTguMTM1IDEuMjY0MjNIMTU3LjcwNVYxLjI2MjkxWiIgZmlsbD0iIzE2M0YzNSIvPgo8L2c+Cjwvc3ZnPgo=",
     alt: "Cymbiotika"
-  }), /*#__PURE__*/React.createElement("nav", {
-    className: "hdr-nav"
-  }, links.map(l => /*#__PURE__*/React.createElement("button", {
-    key: l,
-    className: "hdr-link"
-  }, l)))), /*#__PURE__*/React.createElement("div", {
-    className: "hdr-actions"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hdr-cta"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary"
-  }, "Shop All"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline hdr-cta-quiz"
-  }, "Take the Quiz")), /*#__PURE__*/React.createElement("div", {
-    className: "hdr-icons"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "hdr-icon hdr-flag",
-    title: "United States"
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "24",
-    height: "24",
-    viewBox: "0 0 24 24"
-  }, /*#__PURE__*/React.createElement("rect", {
-    width: "24",
-    height: "24",
-    fill: "#b22234"
-  }), /*#__PURE__*/React.createElement("rect", {
-    width: "24",
-    height: "1.85",
-    y: "1.85",
-    fill: "#fff"
-  }), /*#__PURE__*/React.createElement("rect", {
-    width: "24",
-    height: "1.85",
-    y: "5.5",
-    fill: "#fff"
-  }), /*#__PURE__*/React.createElement("rect", {
-    width: "24",
-    height: "1.85",
-    y: "9.2",
-    fill: "#fff"
-  }), /*#__PURE__*/React.createElement("rect", {
-    width: "10",
-    height: "9.2",
-    fill: "#3c3b6e"
-  }))), /*#__PURE__*/React.createElement("span", {
-    className: "hdr-icon"
-  }, I.search()), /*#__PURE__*/React.createElement("span", {
-    className: "hdr-icon hdr-user"
-  }, I.user()), /*#__PURE__*/React.createElement("span", {
-    className: "hdr-icon"
-  }, I.bag(), /*#__PURE__*/React.createElement("span", {
-    className: "hdr-bag-count"
-  }, "1"))), /*#__PURE__*/React.createElement("button", {
-    className: "hdr-burger" + (menuOpen ? " is-open" : ""),
-    "aria-label": menuOpen ? "Close menu" : "Open menu",
-    "aria-expanded": menuOpen,
-    onClick: () => setMenuOpen(o => !o)
-  }, menuOpen ? I.close() : I.hamburger()))), menuOpen && /*#__PURE__*/React.createElement("nav", {
-    className: "hdr-menu",
-    onClick: () => setMenuOpen(false)
-  }, links.map(l => /*#__PURE__*/React.createElement("button", {
-    key: l,
-    className: "hdr-menu-link"
-  }, l)), /*#__PURE__*/React.createElement("div", {
-    className: "hdr-menu-cta"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    style: {
-      width: "100%"
-    }
-  }, "Shop All"), /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-outline",
-    style: {
-      width: "100%"
-    }
-  }, "Take the Quiz"))));
+  })));
 }
 
 /* ------------------------------- Footer ------------------------------ */
