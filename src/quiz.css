@@ -303,6 +303,14 @@ html, body {
 .ftr-nav-col li { font-size: var(--q-body-2); font-weight: 400; letter-spacing: 0.42px; opacity: .92; }
 .ftr-nav-col a { color: #fff; text-decoration: none; }
 .ftr-nav-col a:hover { text-decoration: underline; }
+/* Accordion header — plain on desktop (chevron hidden, list always shown) */
+.ftr-nav-head {
+  background: none; border: 0; margin: 0; padding: 0; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: default; font-family: inherit; color: #fff;
+}
+.ftr-nav-chevron { display: none; color: #fff; }
+.ftr-accessibility { color: #fff; border-color: #fff; align-self: flex-end; }
 
 .ftr-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-3); width: 300px; max-width: 100%; }
 .ftr-app { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-2); }
@@ -346,8 +354,21 @@ html, body {
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }
-  .ftr { padding: var(--sp-3); }
-  .ftr-nav { gap: var(--sp-3); }
+  /* Mobile footer — matches Figma: centered brand, accordion nav, centered base */
+  .ftr { flex-direction: column; align-items: stretch; padding: var(--sp-3); gap: var(--sp-3); }
+  .ftr-col-left { align-items: center; }
+  .ftr-nav { flex-direction: column; gap: 0; width: 100%; border-top: 1px solid rgba(255,255,255,.18); }
+  .ftr-nav-col { min-width: 0; width: 100%; gap: 0; border-bottom: 1px solid rgba(255,255,255,.18); }
+  .ftr-nav-head { cursor: pointer; padding: var(--sp-2) 0; }
+  .ftr-nav-chevron { display: inline-flex; transition: transform .2s ease; }
+  .ftr-nav-col.is-open .ftr-nav-chevron { transform: rotate(180deg); }
+  .ftr-nav-col ul { display: none; padding: 0 0 var(--sp-2); }
+  .ftr-nav-col.is-open ul { display: flex; }
+  .ftr-right { width: 100%; align-items: stretch; }
+  .ftr-app { align-items: stretch; }
+  .ftr-accessibility { align-self: center; }
+  .ftr-links { justify-content: center; }
+  .ftr-copyright { text-align: center; }
 }
 
 /* =========================================================================

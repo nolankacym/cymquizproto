@@ -34,6 +34,11 @@ const I = {
       <path d="M15 18l-6-6 6-6" />
     </svg>
   ),
+  chevronDown: (s = 20) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  ),
   check: (s = 20) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 6L9 17l-5-5" />
@@ -173,6 +178,10 @@ function Footer() {
     { h: "Support", items: ["FAQs", "Shipping FAQs", "Arise FAQs", "Returns", "Contact Us", "Gift Card Balance", "Account"] },
     { h: "More", items: ["Store Locator", "Affiliates", "Wholesale"] },
   ];
+  // Mobile only: nav sections collapse into accordions (open state ignored on desktop).
+  const [open, setOpen] = useState({});
+  const toggle = (h) => setOpen((o) => Object.assign({}, o, { [h]: !o[h] }));
+
   return (
     <footer className="ftr">
       <div className="ftr-col-left">
@@ -187,8 +196,11 @@ function Footer() {
 
       <nav className="ftr-nav">
         {cols.map((c) => (
-          <div className="ftr-nav-col" key={c.h}>
-            <h4>{c.h}</h4>
+          <div className={"ftr-nav-col" + (open[c.h] ? " is-open" : "")} key={c.h}>
+            <button className="ftr-nav-head" onClick={() => toggle(c.h)} aria-expanded={!!open[c.h]}>
+              <h4>{c.h}</h4>
+              <span className="ftr-nav-chevron">{I.chevronDown()}</span>
+            </button>
             <ul>{c.items.map((it) => <li key={it}><a href="#">{it}</a></li>)}</ul>
           </div>
         ))}
@@ -211,6 +223,7 @@ function Footer() {
           <p className="ftr-fineprint">By submitting this form, you consent to receive information and/or marketing texts from Cymbiotika including texts sent by autodialer. Consent is not a condition of purchase. Msg &amp; data rates apply. Msg frequency varies. Unsubscribe at any time by replying STOP. Privacy Policy &amp; Terms</p>
         </div>
         <div className="ftr-disclaimer">*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.</div>
+        <button className="btn btn-outline btn-sm ftr-accessibility">Accessibility Tool</button>
         <div className="ftr-links">
           <a href="#">Terms of Service</a><a href="#">Privacy Policy</a><a href="#">Disclaimer</a><a href="#">Arise Terms &amp; Conditions</a>
         </div>

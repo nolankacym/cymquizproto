@@ -318,6 +318,14 @@ html, body {
 .ftr-nav-col li { font-size: var(--q-body-2); font-weight: 400; letter-spacing: 0.42px; opacity: .92; }
 .ftr-nav-col a { color: #fff; text-decoration: none; }
 .ftr-nav-col a:hover { text-decoration: underline; }
+/* Accordion header — plain on desktop (chevron hidden, list always shown) */
+.ftr-nav-head {
+  background: none; border: 0; margin: 0; padding: 0; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: default; font-family: inherit; color: #fff;
+}
+.ftr-nav-chevron { display: none; color: #fff; }
+.ftr-accessibility { color: #fff; border-color: #fff; align-self: flex-end; }
 
 .ftr-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-3); width: 300px; max-width: 100%; }
 .ftr-app { display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-2); }
@@ -361,8 +369,21 @@ html, body {
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }
-  .ftr { padding: var(--sp-3); }
-  .ftr-nav { gap: var(--sp-3); }
+  /* Mobile footer — matches Figma: centered brand, accordion nav, centered base */
+  .ftr { flex-direction: column; align-items: stretch; padding: var(--sp-3); gap: var(--sp-3); }
+  .ftr-col-left { align-items: center; }
+  .ftr-nav { flex-direction: column; gap: 0; width: 100%; border-top: 1px solid rgba(255,255,255,.18); }
+  .ftr-nav-col { min-width: 0; width: 100%; gap: 0; border-bottom: 1px solid rgba(255,255,255,.18); }
+  .ftr-nav-head { cursor: pointer; padding: var(--sp-2) 0; }
+  .ftr-nav-chevron { display: inline-flex; transition: transform .2s ease; }
+  .ftr-nav-col.is-open .ftr-nav-chevron { transform: rotate(180deg); }
+  .ftr-nav-col ul { display: none; padding: 0 0 var(--sp-2); }
+  .ftr-nav-col.is-open ul { display: flex; }
+  .ftr-right { width: 100%; align-items: stretch; }
+  .ftr-app { align-items: stretch; }
+  .ftr-accessibility { align-self: center; }
+  .ftr-links { justify-content: center; }
+  .ftr-copyright { text-align: center; }
 }
 
 /* =========================================================================
@@ -1124,6 +1145,18 @@ const I = {
   }, /*#__PURE__*/React.createElement("path", {
     d: "M15 18l-6-6 6-6"
   })),
+  chevronDown: (s = 20) => /*#__PURE__*/React.createElement("svg", {
+    width: s,
+    height: s,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M6 9l6 6 6-6"
+  })),
   check: (s = 20) => /*#__PURE__*/React.createElement("svg", {
     width: s,
     height: s,
@@ -1443,6 +1476,11 @@ function Footer() {
     h: "More",
     items: ["Store Locator", "Affiliates", "Wholesale"]
   }];
+  // Mobile only: nav sections collapse into accordions (open state ignored on desktop).
+  const [open, setOpen] = useState({});
+  const toggle = h => setOpen(o => Object.assign({}, o, {
+    [h]: !o[h]
+  }));
   return /*#__PURE__*/React.createElement("footer", {
     className: "ftr"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1468,9 +1506,15 @@ function Footer() {
   }, I.youtube()))), /*#__PURE__*/React.createElement("nav", {
     className: "ftr-nav"
   }, cols.map(c => /*#__PURE__*/React.createElement("div", {
-    className: "ftr-nav-col",
+    className: "ftr-nav-col" + (open[c.h] ? " is-open" : ""),
     key: c.h
-  }, /*#__PURE__*/React.createElement("h4", null, c.h), /*#__PURE__*/React.createElement("ul", null, c.items.map(it => /*#__PURE__*/React.createElement("li", {
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ftr-nav-head",
+    onClick: () => toggle(c.h),
+    "aria-expanded": !!open[c.h]
+  }, /*#__PURE__*/React.createElement("h4", null, c.h), /*#__PURE__*/React.createElement("span", {
+    className: "ftr-nav-chevron"
+  }, I.chevronDown())), /*#__PURE__*/React.createElement("ul", null, c.items.map(it => /*#__PURE__*/React.createElement("li", {
     key: it
   }, /*#__PURE__*/React.createElement("a", {
     href: "#"
@@ -1505,7 +1549,9 @@ function Footer() {
     className: "ftr-fineprint"
   }, "By submitting this form, you consent to receive information and/or marketing texts from Cymbiotika including texts sent by autodialer. Consent is not a condition of purchase. Msg & data rates apply. Msg frequency varies. Unsubscribe at any time by replying STOP. Privacy Policy & Terms")), /*#__PURE__*/React.createElement("div", {
     className: "ftr-disclaimer"
-  }, "*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."), /*#__PURE__*/React.createElement("div", {
+  }, "*These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-outline btn-sm ftr-accessibility"
+  }, "Accessibility Tool"), /*#__PURE__*/React.createElement("div", {
     className: "ftr-links"
   }, /*#__PURE__*/React.createElement("a", {
     href: "#"
