@@ -45,8 +45,9 @@ function doPost(e) {
 }
 
 // Lets you sanity-check the deployment by opening the URL in a browser.
+// The `version` confirms the LATEST code is actually live after redeploying.
 function doGet() {
-  return jsonOut({ ok: true, message: "Cymbiotika quiz collector is running." });
+  return jsonOut({ ok: true, version: "email-v2", message: "Cymbiotika quiz collector is running." });
 }
 
 function appendRow(sheetName, fields, data) {
