@@ -630,6 +630,9 @@ function App() {
   const [fbSave, setFbSave] = useState("idle");
   const [fbSubmitting, setFbSubmitting] = useState(false);
   const idRef = useRef(makeId());
+  // Mirror of `answers` that is always current — auto-advance submits from a
+  // setTimeout whose closure would otherwise miss the just-clicked final answer.
+  const answersRef = useRef({});
 
   // Active question list. The two "support" questions branch inline: right
   // after Q1 (focus) and Q2 (wishlist) we insert the matching deep-dive
@@ -682,31 +685,34 @@ function App() {
       } else {
         next = [opt];
       }
-      return Object.assign({}, prev, { [q.id]: next });
+      const updated = Object.assign({}, prev, { [q.id]: next });
+      answersRef.current = updated; // keep the ref in lockstep with state
+      return updated;
     });
   }
 
   function buildResponseRow() {
+    const a = answersRef.current; // latest answers (incl. the final auto-advance)
     return {
       submission_id: idRef.current,
       timestamp: new Date().toISOString(),
       name: name,
-      focus: answers.focus || [],
-      wishlist: answers.wishlist || [],
-      feeling: answers.feeling || [],
-      barriers: answers.barriers || [],
-      experience: answers.experience || [],
-      routine_now: answers["routine-now"] || [],
-      flags: answers.flags || [],
-      commitment: answers.commitment || [],
-      begin: answers.begin || [],
-      mindset: answers.mindset || [],
+      focus: a.focus || [],
+      wishlist: a.wishlist || [],
+      feeling: a.feeling || [],
+      barriers: a.barriers || [],
+      experience: a.experience || [],
+      routine_now: a["routine-now"] || [],
+      flags: a.flags || [],
+      commitment: a.commitment || [],
+      begin: a.begin || [],
+      mindset: a.mindset || [],
       // One column per deep-dive topic; filled only if that branch was shown.
-      dd_energy: answers["cond-energy"] || [],
-      dd_gut: answers["cond-gut"] || [],
-      dd_stress: answers["cond-stress"] || [],
-      dd_beauty: answers["cond-beauty"] || [],
-      dd_other: answers["cond-other"] || [],
+      dd_energy: a["cond-energy"] || [],
+      dd_gut: a["cond-gut"] || [],
+      dd_stress: a["cond-stress"] || [],
+      dd_beauty: a["cond-beauty"] || [],
+      dd_other: a["cond-other"] || [],
     };
   }
 
@@ -760,7 +766,7 @@ function App() {
   }
 
   function restart() {
-    setStage("name"); setName(""); setIdx(0); setAnswers({});
+    setStage("name"); setName(""); setIdx(0); setAnswers({}); answersRef.current = {};
     setRespSave("idle"); setFbSave("idle"); setFbSubmitting(false);
     idRef.current = makeId();
   }
