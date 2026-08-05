@@ -81,7 +81,7 @@ html, body {
    Uses the design-system overline treatment (uppercase, tracked-out). */
 .hdr-step {
   position: absolute; left: var(--sp-5); top: 50%; transform: translateY(-50%);
-  font-size: var(--q-button); font-weight: 500;
+  font-size: var(--q-body-2); font-weight: 500;
   text-transform: uppercase; letter-spacing: 1.2px;
   color: #6A6C6E; white-space: nowrap;
 }
@@ -361,7 +361,7 @@ html, body {
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2); }
-  .hdr-step { left: var(--sp-2); font-size: var(--q-button); letter-spacing: 0.8px; }
+  .hdr-step { left: var(--sp-2); font-size: var(--q-body-2); letter-spacing: 0.8px; }
   .hdr-step-full { display: none; }   /* mobile: show compact "x/10" */
   .hdr-step-short { display: inline; }
   .hdr-wordmark { height: 14px; }
