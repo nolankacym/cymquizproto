@@ -213,6 +213,33 @@ function Stage({ progress, canBack, onBack, children }) {
   );
 }
 
+/* ------------------------------ Name step ---------------------------- */
+/* First step — collects the person's name before the quiz begins. */
+function NameCard({ value, onChange, onNext, progress }) {
+  const canNext = value.trim().length > 0;
+  function submit(e) { e.preventDefault(); if (canNext) onNext(value.trim()); }
+  return (
+    <Stage progress={progress}>
+      <form className="q-card" onSubmit={submit}>
+        <div className="q-head">
+          <h2 className="q-title">What is your name?</h2>
+        </div>
+        <div className="q-options">
+          <input
+            className="q-input"
+            type="text"
+            placeholder="Your first name"
+            value={value}
+            autoFocus
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary q-next" disabled={!canNext}>Next</button>
+      </form>
+    </Stage>
+  );
+}
+
 /* ------------------------------ Email step --------------------------- */
 /* Final step — collects the email, then submits the quiz and shows results. */
 function EmailCard({ value, onChange, onSubmit, onBack, canBack, progress, submitting }) {
@@ -598,7 +625,9 @@ function Thanks({ saveState, onRestart }) {
 
 /* ------------------------------- App --------------------------------- */
 function App() {
-  const [stage, setStage] = useState("quiz"); // quiz | email | complete | feedback | thanks
+  const [stage, setStage] = useState("name"); // name | quiz | email | complete | feedback | thanks
+  const [name, setName] = useState("");
+  const nameRef = useRef("");
   const [email, setEmail] = useState("");
   const emailRef = useRef("");
   const [idx, setIdx] = useState(0);
@@ -640,11 +669,12 @@ function App() {
 
   const q = questions[idx];
   const total = questions.length;
-  // Progress across: questions (total) + email (1). Complete/feedback/thanks = 100.
-  const steps = total + 1;
+  // Progress across: name (1) + questions (total) + email (1). Complete/etc = 100.
+  const steps = total + 2;
   let progress = 100;
-  if (stage === "quiz") progress = Math.round(((idx + 1) / steps) * 100);
-  else if (stage === "email") progress = Math.round((total / steps) * 100);
+  if (stage === "name") progress = 0;
+  else if (stage === "quiz") progress = Math.round(((idx + 1) / steps) * 100);
+  else if (stage === "email") progress = Math.round(((total + 1) / steps) * 100);
 
   function toggle(opt) {
     setAnswers((prev) => {
@@ -673,6 +703,7 @@ function App() {
     return {
       submission_id: idRef.current,
       timestamp: new Date().toISOString(),
+      name: nameRef.current,
       email: emailRef.current,
       focus: a.focus || [],
       wishlist: a.wishlist || [],
@@ -720,6 +751,7 @@ function App() {
     const payload = {
       submission_id: idRef.current,
       timestamp: new Date().toISOString(),
+      name: nameRef.current,
       email: emailRef.current,
       rating: fb.rating,
       ease: fb.ease,
@@ -743,7 +775,8 @@ function App() {
   }
 
   function restart() {
-    setStage("quiz"); setEmail(""); emailRef.current = ""; setIdx(0); setAnswers({}); answersRef.current = {};
+    setStage("name"); setName(""); nameRef.current = ""; setEmail(""); emailRef.current = "";
+    setIdx(0); setAnswers({}); answersRef.current = {};
     setRespSave("idle"); setFbSave("idle"); setFbSubmitting(false);
     idRef.current = makeId();
   }
@@ -751,6 +784,15 @@ function App() {
   return (
     <div className="quiz-app">
       <Header />
+
+      {stage === "name" && (
+        <NameCard
+          value={name}
+          onChange={(v) => { setName(v); nameRef.current = v; }}
+          onNext={(nm) => { setName(nm); nameRef.current = nm; setStage("quiz"); }}
+          progress={progress}
+        />
+      )}
 
       {stage === "quiz" && (
         <QuestionCard

@@ -41,6 +41,7 @@ COND_LABEL = {
 
 # (source key, friendly header, width, wrap?)
 RESP_COLS = [
+    ("name", "Name", 16, False),
     ("email", "Email", 24, False),
     ("timestamp", "Submitted", 20, False),
     ("focus", "Primary focus (Q1)", 22, True),
@@ -62,6 +63,7 @@ RESP_COLS = [
 ]
 
 FB_COLS = [
+    ("name", "Name", 16, False),
     ("email", "Email", 24, False),
     ("timestamp", "Submitted", 20, False),
     ("rating", "Rating (1-5)", 12, False),

@@ -23,13 +23,13 @@ _lock = threading.Lock()
 
 # Fixed, human-readable schemas (mirror data.js question ids).
 RESP_FIELDS = [
-    "submission_id", "timestamp", "email",
+    "submission_id", "timestamp", "name", "email",
     "focus", "wishlist", "feeling", "barriers", "experience",
     "routine_now", "flags", "commitment", "begin", "mindset",
     # One column per deep-dive topic (filled only when that branch was shown).
     "dd_energy", "dd_gut", "dd_stress", "dd_beauty", "dd_other",
 ]
-FB_FIELDS = ["submission_id", "timestamp", "email", "rating", "ease", "comment"]
+FB_FIELDS = ["submission_id", "timestamp", "name", "email", "rating", "ease", "comment"]
 
 
 def append_row(path, fields, row):

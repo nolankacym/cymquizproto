@@ -1512,6 +1512,44 @@ function Stage({
   }, I.chevronLeft())), children));
 }
 
+/* ------------------------------ Name step ---------------------------- */
+/* First step — collects the person's name before the quiz begins. */
+function NameCard({
+  value,
+  onChange,
+  onNext,
+  progress
+}) {
+  const canNext = value.trim().length > 0;
+  function submit(e) {
+    e.preventDefault();
+    if (canNext) onNext(value.trim());
+  }
+  return /*#__PURE__*/React.createElement(Stage, {
+    progress: progress
+  }, /*#__PURE__*/React.createElement("form", {
+    className: "q-card",
+    onSubmit: submit
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "q-head"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "q-title"
+  }, "What is your name?")), /*#__PURE__*/React.createElement("div", {
+    className: "q-options"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "q-input",
+    type: "text",
+    placeholder: "Your first name",
+    value: value,
+    autoFocus: true,
+    onChange: e => onChange(e.target.value)
+  })), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "btn btn-primary q-next",
+    disabled: !canNext
+  }, "Next")));
+}
+
 /* ------------------------------ Email step --------------------------- */
 /* Final step — collects the email, then submits the quiz and shows results. */
 function EmailCard({
@@ -1986,7 +2024,9 @@ function Thanks({
 
 /* ------------------------------- App --------------------------------- */
 function App() {
-  const [stage, setStage] = useState("quiz"); // quiz | email | complete | feedback | thanks
+  const [stage, setStage] = useState("name"); // name | quiz | email | complete | feedback | thanks
+  const [name, setName] = useState("");
+  const nameRef = useRef("");
   const [email, setEmail] = useState("");
   const emailRef = useRef("");
   const [idx, setIdx] = useState(0);
@@ -2027,10 +2067,10 @@ function App() {
   }, [answers]);
   const q = questions[idx];
   const total = questions.length;
-  // Progress across: questions (total) + email (1). Complete/feedback/thanks = 100.
-  const steps = total + 1;
+  // Progress across: name (1) + questions (total) + email (1). Complete/etc = 100.
+  const steps = total + 2;
   let progress = 100;
-  if (stage === "quiz") progress = Math.round((idx + 1) / steps * 100);else if (stage === "email") progress = Math.round(total / steps * 100);
+  if (stage === "name") progress = 0;else if (stage === "quiz") progress = Math.round((idx + 1) / steps * 100);else if (stage === "email") progress = Math.round((total + 1) / steps * 100);
   function toggle(opt) {
     setAnswers(prev => {
       const cur = prev[q.id] ? prev[q.id].slice() : [];
@@ -2059,6 +2099,7 @@ function App() {
     return {
       submission_id: idRef.current,
       timestamp: new Date().toISOString(),
+      name: nameRef.current,
       email: emailRef.current,
       focus: a.focus || [],
       wishlist: a.wishlist || [],
@@ -2104,6 +2145,7 @@ function App() {
     const payload = {
       submission_id: idRef.current,
       timestamp: new Date().toISOString(),
+      name: nameRef.current,
       email: emailRef.current,
       rating: fb.rating,
       ease: fb.ease,
@@ -2134,7 +2176,9 @@ function App() {
     });
   }
   function restart() {
-    setStage("quiz");
+    setStage("name");
+    setName("");
+    nameRef.current = "";
     setEmail("");
     emailRef.current = "";
     setIdx(0);
@@ -2147,7 +2191,19 @@ function App() {
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "quiz-app"
-  }, /*#__PURE__*/React.createElement(Header, null), stage === "quiz" && /*#__PURE__*/React.createElement(QuestionCard, {
+  }, /*#__PURE__*/React.createElement(Header, null), stage === "name" && /*#__PURE__*/React.createElement(NameCard, {
+    value: name,
+    onChange: v => {
+      setName(v);
+      nameRef.current = v;
+    },
+    onNext: nm => {
+      setName(nm);
+      nameRef.current = nm;
+      setStage("quiz");
+    },
+    progress: progress
+  }), stage === "quiz" && /*#__PURE__*/React.createElement(QuestionCard, {
     q: q,
     value: answers[q.id],
     onToggle: toggle,
