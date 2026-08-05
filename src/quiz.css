@@ -405,7 +405,9 @@ header { position: sticky; top: 0; z-index: 40; }
 
 .rp-cols { display: grid; grid-template-columns: 1fr 380px; gap: var(--sp-4); align-items: start; }
 .rp-left { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
-.rp-right { min-width: 0; }
+/* Stretch to the full row height (overriding .rp-cols align-items:start) so the
+   sticky routine card inside has room to travel as the left column scrolls. */
+.rp-right { min-width: 0; align-self: stretch; }
 
 /* ---- product card ---- */
 .rp-card {
@@ -526,7 +528,8 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-disclaimer { font-size: var(--q-body-2); font-weight: 400; line-height: 1.5; color: var(--q-ink-60); margin: 0; }
 
 /* ---- build your routine (sidebar) ---- */
-.rp-routine { position: sticky; top: var(--sp-3); background: #fff; border: 1px solid var(--q-stroke); border-radius: 8px; padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); }
+/* Sticks just below the always-on-top navbar so it's never hidden behind it. */
+.rp-routine { position: sticky; top: calc(var(--hdr-h, 82px) + var(--sp-3)); background: #fff; border: 1px solid var(--q-stroke); border-radius: 8px; padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); }
 .rp-routine-head h3 { font-size: 24px; font-weight: 500; letter-spacing: 0.2px; margin: 0; color: #000; }
 .rp-routine-head p { margin: 8px 0 0; font-size: var(--q-body-2); font-weight: 400; color: var(--q-ink-60); }
 .rp-selcount { color: var(--q-ink-60); }
