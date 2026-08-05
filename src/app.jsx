@@ -472,11 +472,12 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
 
   return (
     <div className="rp">
-      <button className="rp-startover" onClick={onStartOver}>{I.uturn()} Start Over</button>
-      <h1 className="rp-title">Here’s your personalized supplement routine</h1>
-
-      {/* Mobile-only condensed sticky bar (full-width once pinned) */}
+      {/* Sentinel at the very top: once it scrolls past (header gone), the bar slides down */}
       <div ref={sentinelRef} className="rp-sb-sentinel" aria-hidden="true" />
+
+      {/* Mobile-only condensed bar — NOT on the initial screen; a fixed top bar
+          that slides down once scrolled past the header, and hides again once the
+          full Build Your Routine section scrolls into view. */}
       <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "") + (stuck ? " is-stuck" : "")}>
         <div className="rp-sb-top">
           <span className="rp-sb-title">Build Your Routine</span>
@@ -489,6 +490,9 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
           </button>
         </div>
       </div>
+
+      <button className="rp-startover" onClick={onStartOver}>{I.uturn()} Start Over</button>
+      <h1 className="rp-title">Here’s your personalized supplement routine</h1>
 
       <div className="rp-cols">
         {/* LEFT — recommendations */}
