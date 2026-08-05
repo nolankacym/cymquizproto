@@ -83,7 +83,7 @@ html, body {
   position: absolute; left: var(--sp-5); top: 50%; transform: translateY(-50%);
   font-size: var(--q-caption); font-weight: 500;
   text-transform: uppercase; letter-spacing: 1.2px;
-  color: var(--q-ink-60); white-space: nowrap;
+  color: #6A6C6E; white-space: nowrap;
 }
 .hdr-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .hdr-wordmark { height: 16px; width: auto; display: block; }
