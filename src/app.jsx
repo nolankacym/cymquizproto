@@ -354,12 +354,21 @@ function PlanRadios({ product, plan, onPlan }) {
   );
 }
 
-/* Cymbiotika Wellness Assistant "Because you said…" rationale box. */
+/* Cymbiotika Wellness Assistant "Because you said…" rationale box.
+   The text "forms" (blur-in) then a light shimmer sweeps across it once,
+   à la Google Gemini's generating-text interaction. */
 function Assistant({ blurb }) {
+  const [writing, setWriting] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setWriting(false), 2600);
+    return () => clearTimeout(t);
+  }, []);
   return (
     <div className="rp-assistant">
       <span className="rp-assistant-label">{I.sparkle()} Cymbiotika Wellness Assistant</span>
-      <p><span className="rp-assistant-lead">Because you said…</span> {blurb}</p>
+      <p className={"rp-assistant-text" + (writing ? " is-writing" : "")}>
+        <span className="rp-assistant-lead">Because you said…</span> {blurb}
+      </p>
     </div>
   );
 }
@@ -448,7 +457,14 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
       const io2 = new IntersectionObserver((e) => setStuck(!e[0].isIntersecting));
       io2.observe(sentinelRef.current); obs.push(io2);
     }
-    return () => obs.forEach((o) => o.disconnect());
+    // Keep the sticky bar docked just below the (always-on-top) navbar.
+    const setHdr = () => {
+      const h = document.querySelector("header");
+      if (h) document.documentElement.style.setProperty("--hdr-h", Math.round(h.getBoundingClientRect().height) + "px");
+    };
+    setHdr();
+    window.addEventListener("resize", setHdr);
+    return () => { obs.forEach((o) => o.disconnect()); window.removeEventListener("resize", setHdr); };
   }, []);
 
   function slots() {
