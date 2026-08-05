@@ -12,14 +12,14 @@ def b64(p): return base64.b64encode(open(p, "rb").read()).decode("ascii")
 
 # ---- assets -> data URIs ----
 def data_svg(name): return "data:image/svg+xml;base64," + b64(os.path.join(Q, "assets", name))
-def data_png(name): return "data:image/png;base64," + b64(os.path.join(B, name))
+def data_png(name): return "data:image/png;base64," + b64(os.path.join(Q, "assets", name))
 
 asset_map = {
     "assets/brandmark-green.svg": data_svg("brandmark-green.svg"),
     "assets/wordmark-dark.svg": data_svg("wordmark-dark.svg"),
     "assets/logo-white.svg": data_svg("logo-white.svg"),
-    "assets/prod-creatine.png": data_png("prod-creatine.png"),
     "assets/prod-glutathione.png": data_png("prod-glutathione.png"),
+    "assets/prod-d3k2.png": data_png("prod-d3k2.png"),
     "assets/prod-vitaminc.png": data_png("prod-vitaminc.png"),
 }
 

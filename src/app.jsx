@@ -39,6 +39,9 @@ const I = {
       <path d="M6 9l6 6 6-6" />
     </svg>
   ),
+  sparkle: (s = 14) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z" /></svg>
+  ),
   check: (s = 20) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 6L9 17l-5-5" />
@@ -324,13 +327,6 @@ function QuestionCard({ q, value, onToggle, onNext, onBack, canBack, stepLabel, 
 }
 
 /* ----------------------------- Results ------------------------------- */
-/* Small circular Cymbiotika avatar used beside product blurbs. */
-function BrandAvatar() {
-  return (
-    <span className="rp-avatar"><img src="assets/brandmark-green.svg" alt="" /></span>
-  );
-}
-
 function QtyControl({ value, onChange }) {
   return (
     <div className="rp-qty">
@@ -347,9 +343,7 @@ function PlanRadios({ product, plan, onPlan }) {
       <button type="button" className="rp-plan" onClick={() => onPlan("subscribe")}>
         <span className={"rp-radio" + (plan === "subscribe" ? " on" : "")} />
         <span className="rp-plan-label">Subscribe &amp; Save</span>
-        <span className="rp-plan-price">
-          {money(product.subscribe)} <s>{money(product.oneTime)}</s>
-        </span>
+        <span className="rp-plan-price">{money(product.subscribe)} <s>{money(product.oneTime)}</s></span>
       </button>
       <button type="button" className="rp-plan" onClick={() => onPlan("onetime")}>
         <span className={"rp-radio" + (plan === "onetime" ? " on" : "")} />
@@ -360,183 +354,153 @@ function PlanRadios({ product, plan, onPlan }) {
   );
 }
 
-function ProductCard({ product, badge, badgeKind, variant, plan, qty, onPlan, onQty, inRoutine, onAction }) {
+/* Cymbiotika Wellness Assistant "Because you said…" rationale box. */
+function Assistant({ blurb }) {
   return (
-    <div className={"rp-card rp-card--" + variant}>
-      <div className="rp-card-media">
-        <img src={product.img} alt={product.name} />
+    <div className="rp-assistant">
+      <span className="rp-assistant-label">{I.sparkle()} Cymbiotika Wellness Assistant</span>
+      <p><span className="rp-assistant-lead">Because you said…</span> {blurb}</p>
+    </div>
+  );
+}
+
+function ProductCard({ product, badge, badgeKind, selected, onToggle, plan, qty, onPlan, onQty }) {
+  return (
+    <div className={"rp-card" + (selected ? " is-selected" : "")}>
+      <div className="rp-card-media"><img src={product.img} alt={product.name} /></div>
+      <div className="rp-card-headrow">
+        <span className={"rp-badge rp-badge--" + badgeKind}>{badge}</span>
+        <button
+          type="button"
+          className={"rp-check" + (selected ? " on" : "")}
+          role="checkbox" aria-checked={selected}
+          aria-label={selected ? "Remove from routine" : "Add to routine"}
+          onClick={onToggle}
+        >{selected ? I.check(16) : null}</button>
       </div>
-      <div className="rp-card-body">
-        <div className="rp-card-head">
-          <span className={"rp-badge rp-badge--" + badgeKind}>{badge}</span>
-          <h3 className="rp-name">{product.name}</h3>
-          <div className="rp-price">
-            <span className="rp-price-now">{money(product.subscribe)}</span>
-            <s className="rp-price-was">{money(product.oneTime)}</s>
-          </div>
-        </div>
-        <div className="rp-blurb"><BrandAvatar /><p>{product.blurb}</p></div>
+      <h3 className="rp-name">{product.name}</h3>
+      <div className="rp-price">
+        <span className="rp-price-now">{money(product.subscribe)}</span>
+        <s className="rp-price-was">{money(product.oneTime)}</s>
+      </div>
+      <Assistant blurb={product.blurb} />
+      <div className="rp-card-controls">
+        <QtyControl value={qty} onChange={onQty} />
         <PlanRadios product={product} plan={plan} onPlan={onPlan} />
-        <div className="rp-card-actions">
-          <QtyControl value={qty} onChange={onQty} />
-          <button
-            className={"btn " + (inRoutine ? "btn-outline" : "btn-primary")}
-            style={{ flex: 1 }}
-            onClick={onAction}
-          >
-            {variant === "hero" ? (inRoutine ? "Remove" : "Add to routine") : (inRoutine ? "Added ✓" : "Select")}
-          </button>
-        </div>
       </div>
     </div>
   );
 }
 
 function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
-  // Derive goals + recommendations from the user's real answers.
+  // Derive recommendations from the user's answers.
   const picks = [];
   (answers.focus || []).concat(answers.wishlist || []).forEach((a) => {
     if (picks.indexOf(a) === -1) picks.push(a);
   });
+  const goals = picks.map((a) => GOAL_CHIP[a] || a);
   const focus = (answers.focus && answers.focus[0]) || "Overall wellness + immunity";
-  const chips = picks.map((a) => GOAL_CHIP[a] || a);
 
-  // Top Match is chosen by the primary focus; the other two products enhance.
+  // Top Match from the primary focus; the other two products enhance it.
   const topId = FOCUS_TO_PRODUCT[focus] || "glutathione";
   const topMatch = PRODUCTS[topId];
   const enhance = Object.keys(PRODUCTS).filter((k) => k !== topId).map((k) => PRODUCTS[k]);
-
-  // All products shown (unique ids) → routine lookup.
   const shown = [topMatch].concat(enhance);
-  const byId = {};
-  shown.forEach((p) => { byId[p.id] = p; });
+  const byId = {}; shown.forEach((p) => { byId[p.id] = p; });
 
-  const [routine, setRoutine] = useState([topMatch.id]);
-  const [plans, setPlans] = useState(() => {
-    const m = {}; shown.forEach((p) => { m[p.id] = "subscribe"; }); return m;
+  // Cards: Top Match + two "Support · {goal}" enhancers.
+  const otherGoals = goals.filter((g) => g !== GOAL_CHIP[focus]);
+  const cardMeta = {};
+  cardMeta[topMatch.id] = { badge: "Top Match", kind: "primary" };
+  enhance.forEach((p, i) => {
+    cardMeta[p.id] = { badge: "Support" + (otherGoals[i] ? " · " + otherGoals[i] : ""), kind: "accent" };
   });
-  const [qtys, setQtys] = useState(() => {
-    const m = {}; shown.forEach((p) => { m[p.id] = 1; }); return m;
-  });
+
+  const [routine, setRoutine] = useState([topMatch.id]); // selected (checked) product ids
+  const [plans, setPlans] = useState(() => { const m = {}; shown.forEach((p) => { m[p.id] = "subscribe"; }); return m; });
+  const [qtys, setQtys] = useState(() => { const m = {}; shown.forEach((p) => { m[p.id] = 1; }); return m; });
   const [added, setAdded] = useState(false);
 
-  const setPlan = (id, v) => setPlans((m) => Object.assign({}, m, { [id]: v }));
-  const setQty = (id, v) => setQtys((m) => Object.assign({}, m, { [id]: v }));
-  const toggle = (id) => setRoutine((r) => r.indexOf(id) === -1 ? r.concat(id) : r.filter((x) => x !== id));
+  const setPlan = (id, v) => { setPlans((m) => Object.assign({}, m, { [id]: v })); setAdded(false); };
+  const setQty = (id, v) => { setQtys((m) => Object.assign({}, m, { [id]: v })); setAdded(false); };
+  const toggle = (id) => { setRoutine((r) => r.indexOf(id) === -1 ? r.concat(id) : r.filter((x) => x !== id)); setAdded(false); };
+  const selectAll = () => { setRoutine(shown.map((p) => p.id)); setAdded(false); };
 
   const priceOf = (id) => (plans[id] === "onetime" ? byId[id].oneTime : byId[id].subscribe) * qtys[id];
-  const compareOf = (id) => byId[id].oneTime * qtys[id];
   const total = routine.reduce((s, id) => s + priceOf(id), 0);
-  const compareTotal = routine.reduce((s, id) => s + compareOf(id), 0);
+  const compareTotal = routine.reduce((s, id) => s + byId[id].oneTime * qtys[id], 0);
   const savingPct = compareTotal > 0 ? Math.round((1 - total / compareTotal) * 100) : 0;
 
-  const bundle = shown; // the 3 renders on the right
+  function card(p) {
+    const m = cardMeta[p.id];
+    return (
+      <ProductCard
+        key={p.id} product={p} badge={m.badge} badgeKind={m.kind}
+        selected={routine.indexOf(p.id) !== -1} onToggle={() => toggle(p.id)}
+        plan={plans[p.id]} qty={qtys[p.id]}
+        onPlan={(v) => setPlan(p.id, v)} onQty={(v) => setQty(p.id, v)}
+      />
+    );
+  }
 
   return (
     <div className="rp">
       <button className="rp-startover" onClick={onStartOver}>{I.uturn()} Start Over</button>
-
-      <div className="rp-hero">
-        <h1 className="rp-title">Here’s your personalized supplement plan</h1>
-        <p className="rp-sub">We’ve created this custom bundle based on your goals, lifestyle, and dietary habits.
-          We’re here to support you on your journey to reach optimal health.</p>
-      </div>
-      <div className="rp-divider" />
-
-      <div className="rp-goals">
-        <span className="rp-goals-label">Your goals:</span>
-        <div className="rp-chips">
-          {chips.map((c) => <span className="rp-chip" key={c}>{c}</span>)}
-        </div>
-      </div>
+      <h1 className="rp-title">Here’s your personalized supplement routine</h1>
 
       <div className="rp-cols">
-        {/* LEFT */}
+        {/* LEFT — recommendations */}
         <div className="rp-left">
-          <ProductCard
-            product={topMatch} badge="Top Match" badgeKind="primary" variant="hero"
-            plan={plans[topMatch.id]} qty={qtys[topMatch.id]}
-            onPlan={(v) => setPlan(topMatch.id, v)} onQty={(v) => setQty(topMatch.id, v)}
-            inRoutine={routine.indexOf(topMatch.id) !== -1} onAction={() => toggle(topMatch.id)}
-          />
+          {card(topMatch)}
 
-          <h2 className="rp-section-title">Enhance your routine</h2>
-          <div className="rp-enhance">
-            {enhance.map((p) => (
-              <ProductCard
-                key={p.id} product={p} badge="Support" badgeKind="accent" variant="grid"
-                plan={plans[p.id]} qty={qtys[p.id]}
-                onPlan={(v) => setPlan(p.id, v)} onQty={(v) => setQty(p.id, v)}
-                inRoutine={routine.indexOf(p.id) !== -1} onAction={() => toggle(p.id)}
-              />
-            ))}
+          <div className="rp-enhance-head">
+            <h2 className="rp-section-title">Enhance your routine</h2>
+            <button className="rp-selectall" onClick={selectAll}>Select All</button>
           </div>
-
-          <p className="rp-disclaimer">Disclaimer: These recommendations are for general wellness support and are
-            not medical advice. If you have a medical condition or health concerns, consult your healthcare
-            provider before starting new supplements.</p>
+          {enhance.map(card)}
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT — build your routine (sticky) */}
         <div className="rp-right">
           <div className="rp-routine">
             <div className="rp-routine-head">
               <h3>Build Your Routine</h3>
-              <p>{savingPct > 0 ? "You’re saving " + savingPct + "% on your routine" : "Your selected routine"}</p>
+              <p>{savingPct > 0 ? "You’re saving " + savingPct + "% on your routine" : "Choose the products for your routine"}
+                <span className="rp-selcount"> · {routine.length} of {shown.length} selected</span></p>
             </div>
-            {routine.length === 0 && <p className="rp-empty">Your routine is empty — add a product to get started.</p>}
-            {routine.map((id) => (
-              <div className="rp-line" key={id}>
-                <div className="rp-line-left">
-                  <span className="rp-line-name">{byId[id].name}</span>
-                  <button className="rp-remove" onClick={() => toggle(id)}>Remove</button>
-                </div>
-                <div className="rp-line-price">
-                  <s>{money(compareOf(id))}</s><span>{money(priceOf(id))}</span>
-                </div>
-              </div>
-            ))}
+            <div className="rp-slots">
+              {shown.map((p) => {
+                const on = routine.indexOf(p.id) !== -1;
+                return (
+                  <div className={"rp-slot" + (on ? " filled" : "")} key={p.id}>
+                    {on ? <img src={p.img} alt={p.name} /> : null}
+                  </div>
+                );
+              })}
+            </div>
             <div className="rp-total">
               <span>Total:</span>
-              <div className="rp-line-price">
-                <s>{money(compareTotal)}</s><span>{money(total)}</span>
-              </div>
+              <div className="rp-total-price"><s>{money(compareTotal)}</s><span>{money(total)}</span></div>
             </div>
             <button className="btn btn-primary" style={{ width: "100%" }}
               disabled={routine.length === 0} onClick={() => setAdded(true)}>
-              {added ? "✓ Added to cart" : "Add to Cart"}
+              {added ? "✓ Added to Cart" : "Add Routine to Cart"}
             </button>
-          </div>
-
-          <div className="rp-bundle">
-            <div className="rp-bundle-items">
-              {bundle.map((p, i) => (
-                <React.Fragment key={p.id}>
-                  {i > 0 && <span className="rp-bundle-plus">{I.plus(16)}</span>}
-                  <div className="rp-bundle-item">
-                    <span className={"rp-badge rp-badge--" + (i === 0 ? "primary" : "accent")}>{i === 0 ? "Primary" : "Support"}</span>
-                    <div className="rp-bundle-media"><img src={p.img} alt={p.name} /></div>
-                    <span className="rp-bundle-name">{p.name}</span>
-                  </div>
-                </React.Fragment>
-              ))}
+            <div className="rp-feedback-cta">
+              <span className={"q-save q-save--" + saveState}>
+                {saveState === "saving" && "Saving your responses…"}
+                {saveState === "saved" && "✓ Your answers were saved"}
+                {saveState === "error" && "Couldn’t save your answers"}
+              </span>
+              <button className="rp-feedback-link" onClick={onFeedback}>Share quiz feedback</button>
             </div>
-            <button className="btn btn-outline" style={{ width: "100%" }}
-              onClick={() => setRoutine(shown.map((p) => p.id))}>
-              Add All {bundle.length} to Cart · {money(bundle.reduce((s, p) => s + p.subscribe, 0))}
-            </button>
-          </div>
-
-          <div className="rp-feedback-cta">
-            <span className={"q-save q-save--" + saveState}>
-              {saveState === "saving" && "Saving your responses…"}
-              {saveState === "saved" && "✓ Your answers were saved"}
-              {saveState === "error" && "Couldn’t save your answers (is the server running?)"}
-            </span>
-            <button className="rp-feedback-link" onClick={onFeedback}>Share quiz feedback</button>
           </div>
         </div>
       </div>
+
+      <p className="rp-disclaimer">Disclaimer: These recommendations are for general wellness support and are not
+        medical advice. Always consult your healthcare provider before starting new supplements, especially if you
+        have a medical condition, health concerns, are currently taking medication, or if you are pregnant or breastfeeding.</p>
     </div>
   );
 }

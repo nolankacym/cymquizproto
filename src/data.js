@@ -217,40 +217,41 @@ window.CONDITIONALS = {
 };
 
 /* =========================================================================
-   Results page — product catalog (3 real products, keyed by id).
+   Results page — product catalog (3 products, keyed by id).
    Name ↔ image pairing is fixed:
-     Liposomal Glutathione  → teal flatlay
-     Advanced Creatine      → orange flatlay
-     Liposomal Vitamin C    → red-orange flatlay
-   Prices are { oneTime, subscribe (≈ -10-20%) }.
+     Liposomal Glutathione            → teal flatlay
+     Liposomal Vitamin D3 + K2 + CoQ10 → gold flatlay
+     Liposomal Vitamin C              → orange flatlay
+   Prices are { oneTime, subscribe }. `blurb` is the Cymbiotika Wellness
+   Assistant "Because you said…" rationale.
    ========================================================================= */
 window.PRODUCTS = {
   glutathione: {
     id: "glutathione",
     name: "Liposomal Glutathione",
-    oneTime: 88, subscribe: 79,
+    oneTime: 116, subscribe: 88,
     img: "assets/prod-glutathione.png",
-    blurb: "The master antioxidant for skin radiance, gentle detox, and healthy cellular aging.",
+    blurb: "you want to feel more like yourself again — this master antioxidant supports gentle detox, radiance, and healthy cellular aging.",
   },
-  creatine: {
-    id: "creatine",
-    name: "Advanced Creatine",
-    oneTime: 62, subscribe: 50,
-    img: "assets/prod-creatine.png",
-    blurb: "Clinically-dosed creatine for strength, recovery, and sustained physical and mental energy.",
+  d3k2: {
+    id: "d3k2",
+    name: "Liposomal Vitamin D3 + K2 + CoQ10",
+    oneTime: 100, subscribe: 76,
+    img: "assets/prod-d3k2.png",
+    blurb: "energy and steady daily performance matter to you — D3 + K2 with CoQ10 supports cellular energy, immunity, and bone health.",
   },
   vitaminc: {
     id: "vitaminc",
     name: "Liposomal Vitamin C",
-    oneTime: 78, subscribe: 62,
+    oneTime: 98, subscribe: 74,
     img: "assets/prod-vitaminc.png",
-    blurb: "Immune-supporting vitamin C with superior liposomal absorption for daily defense.",
+    blurb: "you want stronger day-to-day defense — high-absorption vitamin C supports immunity and natural collagen production.",
   },
 };
 
 /* Which product is the "Top Match" for each primary focus area (Q1). */
 window.FOCUS_TO_PRODUCT = {
-  "Energy + focus": "creatine",
+  "Energy + focus": "d3k2",
   "Gut health + comfort": "glutathione",
   "Stress, sleep + mood": "glutathione",
   "Beauty, aging + longevity": "glutathione",
