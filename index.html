@@ -184,7 +184,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--sp-7) var(--sp-5);
+  padding: var(--sp-5) var(--sp-5); /* 40px top/bottom for all questions */
   gap: var(--sp-5);
 }
 
@@ -372,12 +372,8 @@ html, body {
 }
 @media (max-width: 640px) {
   :root { --q-h2: 28px; }
-  .q-stage { padding: var(--sp-4) var(--sp-3); }
+  .q-stage { padding: var(--sp-5) var(--sp-3); } /* 40px top/bottom, 24px sides */
   .q-back, .q-card, .q-done { width: 100%; }
-  /* Keep the question card a consistent height so it doesn't jump between
-     questions with different option counts (min-height so the longest ones
-     never clip), and center the content vertically within it. */
-  .q-card { min-height: 650px; justify-content: center; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); } /* 24px sides, matching the question container */
   .hdr-step { left: var(--sp-3); letter-spacing: 0.8px; }
