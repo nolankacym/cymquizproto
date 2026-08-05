@@ -368,9 +368,9 @@ function Assistant({ blurb }) {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) { setPhase("done"); return; }
     const timers = [
-      setTimeout(() => setPhase("swap"), 1000),    // skeleton done → slide it down, form the text
-      setTimeout(() => setPhase("writing"), 1400), // skeleton removed
-      setTimeout(() => setPhase("done"), 3700),    // shimmer sweep finished
+      setTimeout(() => setPhase("swap"), 1900),    // skeleton lingers, then slides down & forms the text
+      setTimeout(() => setPhase("writing"), 2300), // skeleton removed
+      setTimeout(() => setPhase("done"), 4600),    // shimmer sweep finished
     ];
     return () => timers.forEach(clearTimeout);
   }, []);

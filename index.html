@@ -594,6 +594,7 @@ header { position: sticky; top: 0; z-index: 40; }
   }
   .rp-card-media img { max-width: 72%; }
   .rp-card-controls { flex-direction: column; align-items: stretch; }
+  .rp-qty { display: none; } /* no quantity picker on mobile */
   .rp-plans { min-width: 0; flex: 0 0 auto; } /* hug content — no flex-basis height in the column */
 }
 
@@ -1800,11 +1801,11 @@ function Assistant({
       setPhase("done");
       return;
     }
-    const timers = [setTimeout(() => setPhase("swap"), 1000),
-    // skeleton done → slide it down, form the text
-    setTimeout(() => setPhase("writing"), 1400),
+    const timers = [setTimeout(() => setPhase("swap"), 1900),
+    // skeleton lingers, then slides down & forms the text
+    setTimeout(() => setPhase("writing"), 2300),
     // skeleton removed
-    setTimeout(() => setPhase("done"), 3700) // shimmer sweep finished
+    setTimeout(() => setPhase("done"), 4600) // shimmer sweep finished
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
