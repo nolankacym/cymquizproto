@@ -509,6 +509,14 @@ html, body {
   transition: opacity .2s ease, transform .2s ease;
 }
 .rp-stickybar.is-hidden { opacity: 0; visibility: hidden; transform: translateY(-8px); pointer-events: none; }
+/* When pinned to the top, break out to full viewport width like a toolbar. */
+.rp-sb-sentinel { height: 0; }
+.rp-stickybar.is-stuck {
+  margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  border-radius: 0; border-top: 0; border-left: 0; border-right: 0;
+  border-bottom: 1px solid var(--q-stroke);
+  padding-left: var(--sp-3); padding-right: var(--sp-3);
+}
 .rp-sb-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .rp-sb-title { font-size: var(--q-body-1); font-weight: 500; letter-spacing: 0.18px; color: #000; }
 .rp-sb-total { font-size: var(--q-body-2); color: var(--q-ink); display: flex; gap: 6px; align-items: baseline; }
@@ -534,7 +542,7 @@ html, body {
   }
   .rp-card-media img { max-width: 72%; }
   .rp-card-controls { flex-direction: column; align-items: stretch; }
-  .rp-plans { min-width: 0; }
+  .rp-plans { min-width: 0; flex: 0 0 auto; } /* hug content — no flex-basis height in the column */
 }
 
 </style>
@@ -1866,15 +1874,26 @@ function ResultsPage({
   // Mobile: a condensed "Build Your Routine" bar sticks to the top until the
   // full section at the bottom scrolls into view, then it hides.
   const bottomRef = useRef(null);
+  const sentinelRef = useRef(null);
   const [barHidden, setBarHidden] = useState(false);
+  const [stuck, setStuck] = useState(false);
   useEffect(() => {
-    const el = bottomRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(e => setBarHidden(e[0].isIntersecting), {
-      rootMargin: "-72px 0px 0px 0px"
-    });
-    io.observe(el);
-    return () => io.disconnect();
+    if (typeof IntersectionObserver === "undefined") return;
+    const obs = [];
+    if (bottomRef.current) {
+      const io = new IntersectionObserver(e => setBarHidden(e[0].isIntersecting), {
+        rootMargin: "-72px 0px 0px 0px"
+      });
+      io.observe(bottomRef.current);
+      obs.push(io);
+    }
+    if (sentinelRef.current) {
+      // full-width the bar only once it's pinned to the top
+      const io2 = new IntersectionObserver(e => setStuck(!e[0].isIntersecting));
+      io2.observe(sentinelRef.current);
+      obs.push(io2);
+    }
+    return () => obs.forEach(o => o.disconnect());
   }, []);
   function slots() {
     return shown.map(p => {
@@ -1911,7 +1930,11 @@ function ResultsPage({
   }, I.uturn(), " Start Over"), /*#__PURE__*/React.createElement("h1", {
     className: "rp-title"
   }, "Here\u2019s your personalized supplement routine"), /*#__PURE__*/React.createElement("div", {
-    className: "rp-stickybar" + (barHidden ? " is-hidden" : "")
+    ref: sentinelRef,
+    className: "rp-sb-sentinel",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "rp-stickybar" + (barHidden ? " is-hidden" : "") + (stuck ? " is-stuck" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "rp-sb-top"
   }, /*#__PURE__*/React.createElement("span", {

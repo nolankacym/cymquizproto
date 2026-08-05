@@ -434,13 +434,21 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
   // Mobile: a condensed "Build Your Routine" bar sticks to the top until the
   // full section at the bottom scrolls into view, then it hides.
   const bottomRef = useRef(null);
+  const sentinelRef = useRef(null);
   const [barHidden, setBarHidden] = useState(false);
+  const [stuck, setStuck] = useState(false);
   useEffect(() => {
-    const el = bottomRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver((e) => setBarHidden(e[0].isIntersecting), { rootMargin: "-72px 0px 0px 0px" });
-    io.observe(el);
-    return () => io.disconnect();
+    if (typeof IntersectionObserver === "undefined") return;
+    const obs = [];
+    if (bottomRef.current) {
+      const io = new IntersectionObserver((e) => setBarHidden(e[0].isIntersecting), { rootMargin: "-72px 0px 0px 0px" });
+      io.observe(bottomRef.current); obs.push(io);
+    }
+    if (sentinelRef.current) { // full-width the bar only once it's pinned to the top
+      const io2 = new IntersectionObserver((e) => setStuck(!e[0].isIntersecting));
+      io2.observe(sentinelRef.current); obs.push(io2);
+    }
+    return () => obs.forEach((o) => o.disconnect());
   }, []);
 
   function slots() {
@@ -467,8 +475,9 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
       <button className="rp-startover" onClick={onStartOver}>{I.uturn()} Start Over</button>
       <h1 className="rp-title">Here’s your personalized supplement routine</h1>
 
-      {/* Mobile-only condensed sticky bar */}
-      <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "")}>
+      {/* Mobile-only condensed sticky bar (full-width once pinned) */}
+      <div ref={sentinelRef} className="rp-sb-sentinel" aria-hidden="true" />
+      <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "") + (stuck ? " is-stuck" : "")}>
         <div className="rp-sb-top">
           <span className="rp-sb-title">Build Your Routine</span>
           <span className="rp-sb-total">Total: <strong>{money(total)}</strong> <s>{money(compareTotal)}</s></span>

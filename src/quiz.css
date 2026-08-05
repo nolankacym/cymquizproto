@@ -494,6 +494,14 @@ html, body {
   transition: opacity .2s ease, transform .2s ease;
 }
 .rp-stickybar.is-hidden { opacity: 0; visibility: hidden; transform: translateY(-8px); pointer-events: none; }
+/* When pinned to the top, break out to full viewport width like a toolbar. */
+.rp-sb-sentinel { height: 0; }
+.rp-stickybar.is-stuck {
+  margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  border-radius: 0; border-top: 0; border-left: 0; border-right: 0;
+  border-bottom: 1px solid var(--q-stroke);
+  padding-left: var(--sp-3); padding-right: var(--sp-3);
+}
 .rp-sb-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .rp-sb-title { font-size: var(--q-body-1); font-weight: 500; letter-spacing: 0.18px; color: #000; }
 .rp-sb-total { font-size: var(--q-body-2); color: var(--q-ink); display: flex; gap: 6px; align-items: baseline; }
@@ -519,5 +527,5 @@ html, body {
   }
   .rp-card-media img { max-width: 72%; }
   .rp-card-controls { flex-direction: column; align-items: stretch; }
-  .rp-plans { min-width: 0; }
+  .rp-plans { min-width: 0; flex: 0 0 auto; } /* hug content — no flex-basis height in the column */
 }
