@@ -123,12 +123,17 @@ function makeId() {
 /* ------------------------------- Header ------------------------------ */
 /* Minimal header: promo banner + centered wordmark, with an optional
    "Question X of Y" indicator pinned to the far left (shown during the quiz). */
-function Header({ step }) {
+function Header({ step, stepShort }) {
   return (
     <header>
       <div className="promo-banner">20% off + Free Shipping with code GIFT</div>
       <div className="hdr hdr--center">
-        {step ? <span className="hdr-step">{step}</span> : null}
+        {step ? (
+          <span className="hdr-step">
+            <span className="hdr-step-full">{step}</span>
+            <span className="hdr-step-short">{stepShort}</span>
+          </span>
+        ) : null}
         <img className="hdr-wordmark" src="assets/wordmark-dark.svg" alt="Cymbiotika" />
       </div>
     </header>
@@ -785,7 +790,10 @@ function App() {
 
   return (
     <div className="quiz-app">
-      <Header step={stage === "quiz" ? "Question " + (idx + 1) + " of " + total : ""} />
+      <Header
+        step={stage === "quiz" ? "Question " + (idx + 1) + " of " + total : ""}
+        stepShort={stage === "quiz" ? (idx + 1) + "/" + total : ""}
+      />
 
       {stage === "name" && (
         <NameCard

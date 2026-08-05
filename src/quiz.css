@@ -85,6 +85,7 @@ html, body {
   text-transform: uppercase; letter-spacing: 1.2px;
   color: #6A6C6E; white-space: nowrap;
 }
+.hdr-step-short { display: none; } /* desktop: show full "Question X of Y" */
 .hdr-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .hdr-wordmark { height: 16px; width: auto; display: block; }
 .hdr-nav { display: flex; align-items: center; gap: 12px; }
@@ -360,8 +361,10 @@ html, body {
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2); }
-  .hdr-step { left: var(--sp-2); font-size: 10px; letter-spacing: 0.8px; }
-  .hdr-wordmark { height: 13px; } /* a touch smaller so the overline label clears it */
+  .hdr-step { left: var(--sp-2); font-size: 11px; letter-spacing: 0.8px; }
+  .hdr-step-full { display: none; }   /* mobile: show compact "x/10" */
+  .hdr-step-short { display: inline; }
+  .hdr-wordmark { height: 14px; }
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }
