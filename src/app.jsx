@@ -355,20 +355,46 @@ function PlanRadios({ product, plan, onPlan }) {
 }
 
 /* Cymbiotika Wellness Assistant "Because you said…" rationale box.
-   The text "forms" (blur-in) then a light shimmer sweeps across it once,
-   à la Google Gemini's generating-text interaction. */
+   Google-Gemini-style generation sequence:
+     loading  — a shimmering skeleton box stands in for the copy
+     swap     — the skeleton slides down & fades as the real copy forms in behind it
+     writing  — a soft highlight sweeps across the now-solid text
+     done     — settles to plain ink
+   (reduced-motion users jump straight to the finished copy). */
 function Assistant({ blurb }) {
-  const [writing, setWriting] = useState(true);
+  const [phase, setPhase] = useState("loading");
   useEffect(() => {
-    const t = setTimeout(() => setWriting(false), 2600);
-    return () => clearTimeout(t);
+    const reduce = typeof window !== "undefined" && window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { setPhase("done"); return; }
+    const timers = [
+      setTimeout(() => setPhase("swap"), 1000),    // skeleton done → slide it down, form the text
+      setTimeout(() => setPhase("writing"), 1400), // skeleton removed
+      setTimeout(() => setPhase("done"), 3700),    // shimmer sweep finished
+    ];
+    return () => timers.forEach(clearTimeout);
   }, []);
+  const showSkeleton = phase === "loading" || phase === "swap";
+  const showText = phase !== "loading";
+  const writing = phase === "swap" || phase === "writing";
   return (
     <div className="rp-assistant">
       <span className="rp-assistant-label">{I.sparkle()} Cymbiotika Wellness Assistant</span>
-      <p className={"rp-assistant-text" + (writing ? " is-writing" : "")}>
-        <span className="rp-assistant-lead">Because you said…</span> {blurb}
-      </p>
+      <div className="rp-assistant-body">
+        {showText ? (
+          <p className={"rp-assistant-text" + (writing ? " is-writing" : "")}>
+            <span className="rp-assistant-lead">Because you said…</span> {blurb}
+          </p>
+        ) : null}
+        {showSkeleton ? (
+          <div className={"rp-assistant-skeleton" + (phase === "swap" ? " is-leaving" : "")} aria-hidden="true">
+            <span className="rp-sk-line" />
+            <span className="rp-sk-line" />
+            <span className="rp-sk-line" />
+            <span className="rp-sk-line rp-sk-line--short" />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

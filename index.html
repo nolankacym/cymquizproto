@@ -464,8 +464,35 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-assistant p { margin: 0; font-size: var(--q-body-2); line-height: 1.5; color: var(--q-ink); }
 .rp-assistant-lead { font-weight: 500; }
 
-/* Gemini-style generating-text interaction: the blurb "forms" (blur-in) while a
-   soft highlight sweeps across it once, then it settles to solid ink. */
+/* ---- Gemini-style generation sequence ---- */
+.rp-assistant-body { position: relative; }
+
+/* 1) shimmering skeleton placeholder box */
+.rp-assistant-skeleton { display: flex; flex-direction: column; gap: 9px; padding: 4px 0; }
+.rp-sk-line {
+  height: 11px; border-radius: 6px;
+  background: linear-gradient(100deg, #dde5e1 25%, #f2f7f4 50%, #dde5e1 75%);
+  background-size: 220% 100%;
+  animation: rp-sk-shimmer 1.15s linear infinite;
+}
+.rp-sk-line:nth-child(1) { width: 96%; }
+.rp-sk-line:nth-child(2) { width: 100%; }
+.rp-sk-line:nth-child(3) { width: 90%; }
+.rp-sk-line--short { width: 54%; }
+@keyframes rp-sk-shimmer { from { background-position: 220% 0; } to { background-position: -220% 0; } }
+
+/* 2) placeholder box slides down & fades as the real copy takes its place */
+.rp-assistant-skeleton.is-leaving {
+  position: absolute; inset: 0;
+  animation: rp-sk-out .4s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes rp-sk-out {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(18px); opacity: 0; }
+}
+
+/* 3) the blurb "forms" (blur-in, rising into place) while a soft highlight
+   sweeps across it once, then 4) it settles to solid ink. */
 .rp-assistant-text.is-writing {
   background: linear-gradient(100deg,
     var(--q-ink) 0%, var(--q-ink) 38%,
@@ -478,8 +505,8 @@ header { position: sticky; top: 0; z-index: 40; }
 }
 .rp-assistant-text.is-writing .rp-assistant-lead { -webkit-text-fill-color: transparent; }
 @keyframes rp-ai-form {
-  from { opacity: 0; filter: blur(5px); }
-  to   { opacity: 1; filter: blur(0); }
+  from { opacity: 0; filter: blur(5px); transform: translateY(7px); }
+  to   { opacity: 1; filter: blur(0); transform: translateY(0); }
 }
 @keyframes rp-ai-sweep {
   from { background-position: 130% 0; }
@@ -1757,25 +1784,55 @@ function PlanRadios({
 }
 
 /* Cymbiotika Wellness Assistant "Because you said…" rationale box.
-   The text "forms" (blur-in) then a light shimmer sweeps across it once,
-   à la Google Gemini's generating-text interaction. */
+   Google-Gemini-style generation sequence:
+     loading  — a shimmering skeleton box stands in for the copy
+     swap     — the skeleton slides down & fades as the real copy forms in behind it
+     writing  — a soft highlight sweeps across the now-solid text
+     done     — settles to plain ink
+   (reduced-motion users jump straight to the finished copy). */
 function Assistant({
   blurb
 }) {
-  const [writing, setWriting] = useState(true);
+  const [phase, setPhase] = useState("loading");
   useEffect(() => {
-    const t = setTimeout(() => setWriting(false), 2600);
-    return () => clearTimeout(t);
+    const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setPhase("done");
+      return;
+    }
+    const timers = [setTimeout(() => setPhase("swap"), 1000),
+    // skeleton done → slide it down, form the text
+    setTimeout(() => setPhase("writing"), 1400),
+    // skeleton removed
+    setTimeout(() => setPhase("done"), 3700) // shimmer sweep finished
+    ];
+    return () => timers.forEach(clearTimeout);
   }, []);
+  const showSkeleton = phase === "loading" || phase === "swap";
+  const showText = phase !== "loading";
+  const writing = phase === "swap" || phase === "writing";
   return /*#__PURE__*/React.createElement("div", {
     className: "rp-assistant"
   }, /*#__PURE__*/React.createElement("span", {
     className: "rp-assistant-label"
-  }, I.sparkle(), " Cymbiotika Wellness Assistant"), /*#__PURE__*/React.createElement("p", {
+  }, I.sparkle(), " Cymbiotika Wellness Assistant"), /*#__PURE__*/React.createElement("div", {
+    className: "rp-assistant-body"
+  }, showText ? /*#__PURE__*/React.createElement("p", {
     className: "rp-assistant-text" + (writing ? " is-writing" : "")
   }, /*#__PURE__*/React.createElement("span", {
     className: "rp-assistant-lead"
-  }, "Because you said\u2026"), " ", blurb));
+  }, "Because you said\u2026"), " ", blurb) : null, showSkeleton ? /*#__PURE__*/React.createElement("div", {
+    className: "rp-assistant-skeleton" + (phase === "swap" ? " is-leaving" : ""),
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "rp-sk-line"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-sk-line"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-sk-line"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-sk-line rp-sk-line--short"
+  })) : null));
 }
 function ProductCard({
   product,
