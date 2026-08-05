@@ -4,7 +4,7 @@
    focus in Q1) → summary → feedback → thanks. Completed quizzes are POSTed to
    the server and appended to responses.csv; feedback goes to feedback.csv. */
 
-const { useState, useMemo, useRef } = React;
+const { useState, useMemo, useRef, useEffect } = React;
 
 /* Standalone/Artifact build sets window.__ARTIFACT__ = true — there is no
    server, so quiz/feedback submissions are skipped (kept fully in-browser). */
@@ -431,6 +431,25 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
   const compareTotal = routine.reduce((s, id) => s + byId[id].oneTime * qtys[id], 0);
   const savingPct = compareTotal > 0 ? Math.round((1 - total / compareTotal) * 100) : 0;
 
+  // Mobile: a condensed "Build Your Routine" bar sticks to the top until the
+  // full section at the bottom scrolls into view, then it hides.
+  const bottomRef = useRef(null);
+  const [barHidden, setBarHidden] = useState(false);
+  useEffect(() => {
+    const el = bottomRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((e) => setBarHidden(e[0].isIntersecting), { rootMargin: "-72px 0px 0px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  function slots() {
+    return shown.map((p) => {
+      const on = routine.indexOf(p.id) !== -1;
+      return <div className={"rp-slot" + (on ? " filled" : "")} key={p.id}>{on ? <img src={p.img} alt={p.name} /> : null}</div>;
+    });
+  }
+
   function card(p) {
     const m = cardMeta[p.id];
     return (
@@ -448,6 +467,20 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
       <button className="rp-startover" onClick={onStartOver}>{I.uturn()} Start Over</button>
       <h1 className="rp-title">Here’s your personalized supplement routine</h1>
 
+      {/* Mobile-only condensed sticky bar */}
+      <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "")}>
+        <div className="rp-sb-top">
+          <span className="rp-sb-title">Build Your Routine</span>
+          <span className="rp-sb-total">Total: <strong>{money(total)}</strong> <s>{money(compareTotal)}</s></span>
+        </div>
+        <div className="rp-sb-bottom">
+          <div className="rp-sb-slots">{slots()}</div>
+          <button className="btn btn-primary rp-sb-btn" disabled={routine.length === 0} onClick={() => setAdded(true)}>
+            {added ? "✓ Added to Cart" : "Add Routine to Cart"}
+          </button>
+        </div>
+      </div>
+
       <div className="rp-cols">
         {/* LEFT — recommendations */}
         <div className="rp-left">
@@ -460,24 +493,15 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
           {enhance.map(card)}
         </div>
 
-        {/* RIGHT — build your routine (sticky) */}
+        {/* RIGHT — build your routine (sticky on desktop, full section at bottom on mobile) */}
         <div className="rp-right">
-          <div className="rp-routine">
+          <div className="rp-routine" ref={bottomRef}>
             <div className="rp-routine-head">
               <h3>Build Your Routine</h3>
               <p>{savingPct > 0 ? "You’re saving " + savingPct + "% on your routine" : "Choose the products for your routine"}
                 <span className="rp-selcount"> · {routine.length} of {shown.length} selected</span></p>
             </div>
-            <div className="rp-slots">
-              {shown.map((p) => {
-                const on = routine.indexOf(p.id) !== -1;
-                return (
-                  <div className={"rp-slot" + (on ? " filled" : "")} key={p.id}>
-                    {on ? <img src={p.img} alt={p.name} /> : null}
-                  </div>
-                );
-              })}
-            </div>
+            <div className="rp-slots">{slots()}</div>
             <div className="rp-total">
               <span>Total:</span>
               <div className="rp-total-price"><s>{money(compareTotal)}</s><span>{money(total)}</span></div>
