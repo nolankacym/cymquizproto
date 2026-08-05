@@ -121,12 +121,14 @@ function makeId() {
 }
 
 /* ------------------------------- Header ------------------------------ */
-/* Minimal header for all breakpoints: promo banner + centered wordmark. */
-function Header() {
+/* Minimal header: promo banner + centered wordmark, with an optional
+   "Question X of Y" indicator pinned to the far left (shown during the quiz). */
+function Header({ step }) {
   return (
     <header>
       <div className="promo-banner">20% off + Free Shipping with code GIFT</div>
       <div className="hdr hdr--center">
+        {step ? <span className="hdr-step">{step}</span> : null}
         <img className="hdr-wordmark" src="assets/wordmark-dark.svg" alt="Cymbiotika" />
       </div>
     </header>
@@ -783,7 +785,7 @@ function App() {
 
   return (
     <div className="quiz-app">
-      <Header />
+      <Header step={stage === "quiz" ? "Question " + (idx + 1) + " of " + total : ""} />
 
       {stage === "name" && (
         <NameCard

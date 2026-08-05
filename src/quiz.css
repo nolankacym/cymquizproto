@@ -67,6 +67,7 @@ html, body {
 }
 
 .hdr {
+  position: relative;
   background: var(--q-surface);
   border-bottom: 1px solid var(--q-stroke);
   display: flex;
@@ -76,6 +77,12 @@ html, body {
   padding: var(--sp-2) var(--sp-5);
 }
 .hdr--center { justify-content: center; } /* promo + centered wordmark only */
+/* "Question X of Y" pinned far-left; wordmark stays centered */
+.hdr-step {
+  position: absolute; left: var(--sp-5); top: 50%; transform: translateY(-50%);
+  font-size: var(--q-caption); letter-spacing: 0.12px; color: var(--q-ink-60);
+  white-space: nowrap;
+}
 .hdr-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .hdr-wordmark { height: 16px; width: auto; display: block; }
 .hdr-nav { display: flex; align-items: center; gap: 12px; }
@@ -351,6 +358,8 @@ html, body {
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
   .hdr { gap: var(--sp-2); padding: var(--sp-2); }
+  .hdr-step { left: var(--sp-2); font-size: 11px; }
+  .hdr-wordmark { height: 14px; } /* a touch smaller so the step label clears it */
   .hdr .btn { height: 36px; padding: 0 12px; }
   .hdr-actions { gap: 12px; }
   .hdr-icons { gap: 12px; }
