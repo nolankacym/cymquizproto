@@ -211,6 +211,12 @@ header { position: sticky; top: 0; z-index: 40; }
   color: var(--q-ink-60); margin: 0;
 }
 
+/* Legal disclaimer shown on the email step (Q8 combined with Q9). */
+.q-disclaimer {
+  font-size: 12px; line-height: 1.55; color: var(--q-ink-60);
+  margin: 4px 0 0; text-align: left;
+}
+
 .q-options { display: flex; flex-direction: column; gap: var(--sp-2); width: 100%; }
 .q-option {
   background: var(--q-surface);

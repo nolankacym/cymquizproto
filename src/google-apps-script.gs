@@ -24,8 +24,8 @@ var PREFERRED = {
   Responses: [
     "submission_id", "timestamp", "name", "email",
     "focus", "wishlist", "feeling", "barriers", "experience",
-    "routine_now", "flags", "commitment", "begin", "mindset",
-    "dd_energy", "dd_gut", "dd_stress", "dd_beauty", "dd_other"
+    "routine_now", "flags",
+    "dd_energy", "dd_gut", "dd_stress", "dd_beauty"
   ],
   Feedback: ["submission_id", "timestamp", "name", "email", "rating", "ease", "comment"]
 };

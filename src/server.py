@@ -25,9 +25,9 @@ _lock = threading.Lock()
 RESP_FIELDS = [
     "submission_id", "timestamp", "name", "email",
     "focus", "wishlist", "feeling", "barriers", "experience",
-    "routine_now", "flags", "commitment", "begin", "mindset",
+    "routine_now", "flags",
     # One column per deep-dive topic (filled only when that branch was shown).
-    "dd_energy", "dd_gut", "dd_stress", "dd_beauty", "dd_other",
+    "dd_energy", "dd_gut", "dd_stress", "dd_beauty",
 ]
 FB_FIELDS = ["submission_id", "timestamp", "name", "email", "rating", "ease", "comment"]
 

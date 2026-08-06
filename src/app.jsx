@@ -281,6 +281,12 @@ function EmailCard({ value, onChange, onSubmit, onBack, canBack, progress, submi
         <button type="submit" className="btn btn-primary q-next" disabled={!valid || submitting}>
           {submitting ? "Building your plan…" : "See my plan"}
         </button>
+        <p className="q-disclaimer">
+          This quiz is intended to provide recommendations for general wellness support, not medical
+          advice. You should only seek medical advice from your preferred licensed healthcare professional.
+          Always consult your healthcare provider before starting new supplements, especially if you have a
+          medical condition, health concerns, are currently taking medication, or if you are pregnant or breastfeeding.
+        </p>
       </form>
     </Stage>
   );
@@ -290,6 +296,17 @@ function EmailCard({ value, onChange, onSubmit, onBack, canBack, progress, submi
 function QuestionCard({ q, value, onToggle, onNext, onBack, canBack, stepLabel, progress }) {
   const selected = value || [];
   const canNext = selected.length > 0;
+
+  // Randomized-answer questions (Q1/Q2) get a stable shuffle per question.
+  const opts = useMemo(() => {
+    if (!q.randomize) return q.options;
+    const a = q.options.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }, [q.id]);
 
   // Single-select: choosing an option auto-advances (brief highlight, then next).
   // Multi-select: toggle freely and confirm with the Next button.
@@ -309,7 +326,7 @@ function QuestionCard({ q, value, onToggle, onNext, onBack, canBack, stepLabel, 
         </div>
 
         <div className="q-options" role={q.multi ? "group" : "radiogroup"}>
-          {q.options.map((opt) => {
+          {opts.map((opt) => {
             const isSel = selected.indexOf(opt) !== -1;
             return (
               <button
@@ -729,7 +746,11 @@ function App() {
         used[cid] = true;
       }
     };
+    // Special rule: "Overall wellness + immunity" as the primary goal has no
+    // deep-dive AND skips Q2 (Secondary Goals) — jump straight to Q3.
+    const overallOnly = answers.focus && answers.focus[0] === "Overall wellness + immunity";
     BASICS.forEach((qq) => {
+      if (qq.id === "wishlist" && overallOnly) return; // skip Q2
       seq.push(qq);
       if (qq.id === "focus" && answers.focus && answers.focus[0]) {
         addCond(answers.focus[0]);
@@ -786,15 +807,11 @@ function App() {
       experience: a.experience || [],
       routine_now: a["routine-now"] || [],
       flags: a.flags || [],
-      commitment: a.commitment || [],
-      begin: a.begin || [],
-      mindset: a.mindset || [],
       // One column per deep-dive topic; filled only if that branch was shown.
       dd_energy: a["cond-energy"] || [],
       dd_gut: a["cond-gut"] || [],
       dd_stress: a["cond-stress"] || [],
       dd_beauty: a["cond-beauty"] || [],
-      dd_other: a["cond-other"] || [],
     };
   }
 
