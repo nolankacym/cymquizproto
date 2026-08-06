@@ -491,6 +491,10 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
   const total = routine.reduce((s, id) => s + priceOf(id), 0);
   const compareTotal = routine.reduce((s, id) => s + byId[id].oneTime * qtys[id], 0);
   const savingPct = compareTotal > 0 ? Math.round((1 - total / compareTotal) * 100) : 0;
+  // Variant B: routine totals for each plan, and the plan-aware current total.
+  const subTotal = routine.reduce((s, id) => s + byId[id].subscribe * qtys[id], 0);
+  const oneTimeTotal = compareTotal;
+  const vTotal = routinePlan === "onetime" ? oneTimeTotal : subTotal;
 
   // Mobile: a condensed "Build Your Routine" bar sticks to the top until the
   // full section at the bottom scrolls into view, then it hides.
@@ -549,7 +553,9 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
       <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "") + (stuck ? " is-stuck" : "")}>
         <div className="rp-sb-top">
           <span className="rp-sb-title">Build Your Routine</span>
-          {VARIANT ? null : (
+          {VARIANT ? (
+            <span className="rp-sb-total">Total: <strong>{money(vTotal)}</strong>{routinePlan === "subscribe" ? <s> {money(oneTimeTotal)}</s> : null}</span>
+          ) : (
             <span className="rp-sb-total">Total: <strong>{money(total)}</strong> <s>{money(compareTotal)}</s></span>
           )}
         </div>
@@ -590,10 +596,12 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
                 <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("subscribe"); setAdded(false); }}>
                   <span className={"rp-radio" + (routinePlan === "subscribe" ? " on" : "")} />
                   <span className="rp-plan-label">Subscribe &amp; Save</span>
+                  <span className="rp-plan-price">{money(subTotal)} <s>{money(oneTimeTotal)}</s></span>
                 </button>
                 <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("onetime"); setAdded(false); }}>
                   <span className={"rp-radio" + (routinePlan === "onetime" ? " on" : "")} />
                   <span className="rp-plan-label">One-Time</span>
+                  <span className="rp-plan-price">{money(oneTimeTotal)}</span>
                 </button>
               </div>
             ) : (
