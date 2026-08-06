@@ -306,7 +306,7 @@ function QuestionCard({ q, value, onToggle, onNext, onBack, canBack, stepLabel, 
       const t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
-  }, [q.id]);
+  }, [q.id, q.options.join("|")]);
 
   // Single-select: choosing an option auto-advances (brief highlight, then next).
   // Multi-select: toggle freely and confirm with the Next button.
@@ -763,6 +763,10 @@ function App() {
   }, [answers]);
 
   const q = questions[idx];
+  // Q2 (wishlist) must not offer the goal already chosen in Q1 (focus).
+  const displayQ = (q && q.id === "wishlist" && answers.focus && answers.focus[0])
+    ? Object.assign({}, q, { options: q.options.filter((o) => o !== answers.focus[0]) })
+    : q;
   const total = questions.length;
   // Progress across: name (1) + questions (total) + email (1). Complete/etc = 100.
   const steps = total + 2;
@@ -890,7 +894,7 @@ function App() {
 
       {stage === "quiz" && (
         <QuestionCard
-          q={q}
+          q={displayQ}
           value={answers[q.id]}
           onToggle={toggle}
           onNext={goNext}
