@@ -556,6 +556,11 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-total-price { display: flex; gap: 8px; align-items: baseline; }
 .rp-total-price s { color: var(--q-ink-60); font-weight: 400; }
 
+/* Variant B: routine-wide Subscribe/One-Time toggle inside the routine card. */
+.rp-routine-plans { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--q-stroke); padding-top: var(--sp-2); }
+.rp-routine-plans .rp-plan { padding: 8px 0; }
+.rp-routine-plans .rp-plan-label { font-size: var(--q-body-1); font-weight: 500; }
+
 .rp-feedback-cta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .rp-feedback-link { background: none; border: 0; color: var(--q-green); text-decoration: underline; cursor: pointer; font-family: inherit; font-size: var(--q-body-2); padding: 0; }
 
@@ -1194,6 +1199,12 @@ const ARTIFACT = typeof window !== "undefined" && !!window.__ARTIFACT__;
    Google Apps Script Web App that appends them to the Google Sheet. Set via
    window.__SHEET_ENDPOINT__ in the page. Empty = no sheet (local/artifact). */
 const SHEET_ENDPOINT = typeof window !== "undefined" && window.__SHEET_ENDPOINT__ || "";
+
+/* Split-test variant: window.__VARIANT__ = true switches the results page to
+   "Variant B" — no per-product qty/plan controls; a single routine-wide
+   Subscribe/One-Time toggle lives in the Build Your Routine card (above Add to
+   Cart), and the total price is hidden on both breakpoints. */
+const VARIANT = typeof window !== "undefined" && window.__VARIANT__ === true;
 
 /* Fire-and-forget POST to the Apps Script endpoint. Uses no-cors + text/plain
    so the browser sends a "simple" request (no CORS preflight, which Apps Script
@@ -1877,7 +1888,7 @@ function ProductCard({
     className: "rp-price-was"
   }, money(product.oneTime))), /*#__PURE__*/React.createElement(Assistant, {
     blurb: product.blurb
-  }), /*#__PURE__*/React.createElement("div", {
+  }), VARIANT ? null : /*#__PURE__*/React.createElement("div", {
     className: "rp-card-controls"
   }, /*#__PURE__*/React.createElement(QtyControl, {
     value: qty,
@@ -1940,6 +1951,7 @@ function ResultsPage({
     });
     return m;
   });
+  const [routinePlan, setRoutinePlan] = useState("subscribe"); // variant: one plan for the whole routine
   const [added, setAdded] = useState(false);
   const setPlan = (id, v) => {
     setPlans(m => Object.assign({}, m, {
@@ -2039,7 +2051,7 @@ function ResultsPage({
     className: "rp-sb-top"
   }, /*#__PURE__*/React.createElement("span", {
     className: "rp-sb-title"
-  }, "Build Your Routine"), /*#__PURE__*/React.createElement("span", {
+  }, "Build Your Routine"), VARIANT ? null : /*#__PURE__*/React.createElement("span", {
     className: "rp-sb-total"
   }, "Total: ", /*#__PURE__*/React.createElement("strong", null, money(total)), " ", /*#__PURE__*/React.createElement("s", null, money(compareTotal)))), /*#__PURE__*/React.createElement("div", {
     className: "rp-sb-bottom"
@@ -2076,7 +2088,31 @@ function ResultsPage({
     className: "rp-selcount"
   }, " \xB7 ", routine.length, " of ", shown.length, " selected"))), /*#__PURE__*/React.createElement("div", {
     className: "rp-slots"
-  }, slots()), /*#__PURE__*/React.createElement("div", {
+  }, slots()), VARIANT ? /*#__PURE__*/React.createElement("div", {
+    className: "rp-routine-plans"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "rp-plan",
+    onClick: () => {
+      setRoutinePlan("subscribe");
+      setAdded(false);
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "rp-radio" + (routinePlan === "subscribe" ? " on" : "")
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-plan-label"
+  }, "Subscribe & Save")), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "rp-plan",
+    onClick: () => {
+      setRoutinePlan("onetime");
+      setAdded(false);
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "rp-radio" + (routinePlan === "onetime" ? " on" : "")
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-plan-label"
+  }, "One-Time"))) : /*#__PURE__*/React.createElement("div", {
     className: "rp-total"
   }, /*#__PURE__*/React.createElement("span", null, "Total:"), /*#__PURE__*/React.createElement("div", {
     className: "rp-total-price"

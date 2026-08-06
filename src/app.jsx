@@ -15,6 +15,12 @@ const ARTIFACT = typeof window !== "undefined" && !!window.__ARTIFACT__;
    window.__SHEET_ENDPOINT__ in the page. Empty = no sheet (local/artifact). */
 const SHEET_ENDPOINT = (typeof window !== "undefined" && window.__SHEET_ENDPOINT__) || "";
 
+/* Split-test variant: window.__VARIANT__ = true switches the results page to
+   "Variant B" — no per-product qty/plan controls; a single routine-wide
+   Subscribe/One-Time toggle lives in the Build Your Routine card (above Add to
+   Cart), and the total price is hidden on both breakpoints. */
+const VARIANT = typeof window !== "undefined" && window.__VARIANT__ === true;
+
 /* Fire-and-forget POST to the Apps Script endpoint. Uses no-cors + text/plain
    so the browser sends a "simple" request (no CORS preflight, which Apps Script
    doesn't answer). The response is opaque, so success = the request resolved. */
@@ -419,10 +425,12 @@ function ProductCard({ product, badge, badgeKind, selected, onToggle, plan, qty,
         <s className="rp-price-was">{money(product.oneTime)}</s>
       </div>
       <Assistant blurb={product.blurb} />
-      <div className="rp-card-controls">
-        <QtyControl value={qty} onChange={onQty} />
-        <PlanRadios product={product} plan={plan} onPlan={onPlan} />
-      </div>
+      {VARIANT ? null : (
+        <div className="rp-card-controls">
+          <QtyControl value={qty} onChange={onQty} />
+          <PlanRadios product={product} plan={plan} onPlan={onPlan} />
+        </div>
+      )}
     </div>
   );
 }
@@ -454,6 +462,7 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
   const [routine, setRoutine] = useState([topMatch.id]); // selected (checked) product ids
   const [plans, setPlans] = useState(() => { const m = {}; shown.forEach((p) => { m[p.id] = "subscribe"; }); return m; });
   const [qtys, setQtys] = useState(() => { const m = {}; shown.forEach((p) => { m[p.id] = 1; }); return m; });
+  const [routinePlan, setRoutinePlan] = useState("subscribe"); // variant: one plan for the whole routine
   const [added, setAdded] = useState(false);
 
   const setPlan = (id, v) => { setPlans((m) => Object.assign({}, m, { [id]: v })); setAdded(false); };
@@ -523,7 +532,9 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
       <div className={"rp-stickybar" + (barHidden ? " is-hidden" : "") + (stuck ? " is-stuck" : "")}>
         <div className="rp-sb-top">
           <span className="rp-sb-title">Build Your Routine</span>
-          <span className="rp-sb-total">Total: <strong>{money(total)}</strong> <s>{money(compareTotal)}</s></span>
+          {VARIANT ? null : (
+            <span className="rp-sb-total">Total: <strong>{money(total)}</strong> <s>{money(compareTotal)}</s></span>
+          )}
         </div>
         <div className="rp-sb-bottom">
           <div className="rp-sb-slots">{slots()}</div>
@@ -557,10 +568,23 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
                 <span className="rp-selcount"> · {routine.length} of {shown.length} selected</span></p>
             </div>
             <div className="rp-slots">{slots()}</div>
-            <div className="rp-total">
-              <span>Total:</span>
-              <div className="rp-total-price"><s>{money(compareTotal)}</s><span>{money(total)}</span></div>
-            </div>
+            {VARIANT ? (
+              <div className="rp-routine-plans">
+                <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("subscribe"); setAdded(false); }}>
+                  <span className={"rp-radio" + (routinePlan === "subscribe" ? " on" : "")} />
+                  <span className="rp-plan-label">Subscribe &amp; Save</span>
+                </button>
+                <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("onetime"); setAdded(false); }}>
+                  <span className={"rp-radio" + (routinePlan === "onetime" ? " on" : "")} />
+                  <span className="rp-plan-label">One-Time</span>
+                </button>
+              </div>
+            ) : (
+              <div className="rp-total">
+                <span>Total:</span>
+                <div className="rp-total-price"><s>{money(compareTotal)}</s><span>{money(total)}</span></div>
+              </div>
+            )}
             <button className="btn btn-primary" style={{ width: "100%" }}
               disabled={routine.length === 0} onClick={() => setAdded(true)}>
               {added ? "✓ Added to Cart" : "Add Routine to Cart"}

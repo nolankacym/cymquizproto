@@ -82,8 +82,18 @@ standalone = f"""<!doctype html>
 out_standalone = os.path.join(B, "quiz-standalone.html")
 open(out_standalone, "w", encoding="utf-8").write(standalone)
 
+# 3) Variant B — same app, results page switched via window.__VARIANT__.
+#    Deployed to a SEPARATE GitHub Pages site for split testing.
+standalone_variant = standalone.replace(
+    "</head>", '<script>window.__VARIANT__ = true;</script>\n</head>', 1)
+out_variant = os.path.join(B, "quiz-standalone-variant.html")
+open(out_variant, "w", encoding="utf-8").write(standalone_variant)
+
 print(f"wrote {out_artifact}  ({len(body)/1024:.0f} KB, body-only for Claude Artifact)")
-print(f"wrote {out_standalone}  ({len(standalone)/1024:.0f} KB, full doc for GitHub Pages)")
+print(f"wrote {out_standalone}  ({len(standalone)/1024:.0f} KB, full doc for GitHub Pages — original/A)")
+print(f"wrote {out_variant}  ({len(standalone_variant)/1024:.0f} KB, full doc — variant/B)")
+print("  variant flag present:", "window.__VARIANT__ = true" in standalone_variant)
+print("  original has NO variant flag:", "window.__VARIANT__" not in standalone)
 for tag in ["window.__ARTIFACT__", "ReactDOM", "window.BASICS", "React.createElement", "@font-face"]:
     print(f"  contains {tag!r}:", tag in standalone)
 print("  viewport meta present:", 'name="viewport"' in standalone)
