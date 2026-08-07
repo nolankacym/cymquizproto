@@ -17,6 +17,7 @@
 
   /* Type */
   --q-font: 'Neue Haas Grotesk Display Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --q-h1: 48px;
   --q-h2: 36px;
   --q-body-1: 18px;
   --q-body-2: 14px;
@@ -364,7 +365,7 @@ header { position: sticky; top: 0; z-index: 40; }
   .ftr-app { align-items: stretch; }
 }
 @media (max-width: 640px) {
-  :root { --q-h2: 28px; }
+  :root { --q-h1: 32px; --q-h2: 28px; }
   .q-stage { padding: var(--sp-5) var(--sp-3); } /* 40px top/bottom, 24px sides */
   .q-back, .q-card, .q-done { width: 100%; }
   /* Compact mobile header so wordmark + Shop All + icons + burger fit one row */
@@ -407,7 +408,7 @@ header { position: sticky; top: 0; z-index: 40; }
   font-family: inherit; font-size: var(--q-button); color: var(--q-ink-60);
 }
 .rp-startover:hover { color: var(--q-ink); }
-.rp-title { font-size: var(--q-h2); font-weight: 500; line-height: 1.3; letter-spacing: 0.1px; margin: 0; color: #222; }
+.rp-title { font-size: var(--q-h1); font-weight: 500; line-height: 1.3; letter-spacing: 0.25px; margin: 0; color: #222; }
 
 .rp-cols { display: grid; grid-template-columns: 1fr 380px; gap: var(--sp-4); align-items: start; }
 .rp-left { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
@@ -527,7 +528,8 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-plan-price s { color: var(--q-ink-60); }
 
 /* ---- enhance header ---- */
-.rp-enhance-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* Extra breathing room between the Top Match card and the "Enhance your routine" section. */
+.rp-enhance-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: var(--sp-4); }
 .rp-section-title { font-size: var(--q-h2); font-weight: 500; line-height: 1.3; letter-spacing: 0.1px; margin: 0; color: #222; }
 .rp-selectall { background: none; border: 0; cursor: pointer; font-family: inherit; font-size: var(--q-button); color: var(--q-green); text-decoration: underline; padding: 0; white-space: nowrap; }
 
@@ -604,7 +606,8 @@ header { position: sticky; top: 0; z-index: 40; }
 }
 @media (max-width: 640px) {
   .rp { padding: var(--sp-4) var(--sp-3) var(--sp-5); }
-  .rp-title, .rp-section-title { font-size: 28px; }
+  .rp-title { font-size: var(--q-h1); }       /* H1 mobile = 32px */
+  .rp-section-title { font-size: 28px; }
   .rp-card {
     grid-template-columns: 1fr;
     grid-template-areas: "headrow" "name" "price" "media" "assistant" "controls";
