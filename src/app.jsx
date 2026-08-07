@@ -422,19 +422,24 @@ function Assistant({ blurb }) {
   );
 }
 
-function ProductCard({ product, badge, badgeKind, selected, onToggle, plan, qty, onPlan, onQty }) {
+function ProductCard({ product, badge, badgeKind, selected, onToggle, plan, qty, onPlan, onQty, locked, selectLabel }) {
+  const checked = selected || locked; // locked (primary) is always in the routine
   return (
-    <div className={"rp-card" + (selected ? " is-selected" : "")}>
+    <div className={"rp-card" + (checked ? " is-selected" : "")}>
       <div className="rp-card-media"><img src={product.img} alt={product.name} /></div>
       <div className="rp-card-headrow">
         <span className={"rp-badge rp-badge--" + badgeKind}>{badge}</span>
-        <button
-          type="button"
-          className={"rp-check" + (selected ? " on" : "")}
-          role="checkbox" aria-checked={selected}
-          aria-label={selected ? "Remove from routine" : "Add to routine"}
-          onClick={onToggle}
-        >{selected ? I.check(16) : null}</button>
+        <div className="rp-select">
+          {selectLabel ? <span className="rp-select-label">Select</span> : null}
+          <button
+            type="button"
+            className={"rp-check" + (checked ? " on" : "")}
+            role="checkbox" aria-checked={checked}
+            aria-label={locked ? "Included in your routine" : (selected ? "Remove from routine" : "Add to routine")}
+            disabled={locked}
+            onClick={locked ? undefined : onToggle}
+          >{checked ? I.check(16) : null}</button>
+        </div>
       </div>
       <h3 className="rp-name">{product.name}</h3>
       <div className="rp-price">
@@ -532,18 +537,21 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
 
   function card(p) {
     const m = cardMeta[p.id];
+    const isPrimary = p.id === topMatch.id;
     return (
       <ProductCard
         key={p.id} product={p} badge={m.badge} badgeKind={m.kind}
         selected={routine.indexOf(p.id) !== -1} onToggle={() => toggle(p.id)}
         plan={plans[p.id]} qty={qtys[p.id]}
         onPlan={(v) => setPlan(p.id, v)} onQty={(v) => setQty(p.id, v)}
+        locked={VARIANT && isPrimary}          /* B: Top Match is permanent */
+        selectLabel={VARIANT && !isPrimary}    /* B: "Select" next to the checkbox */
       />
     );
   }
 
   return (
-    <div className="rp">
+    <div className={"rp" + (VARIANT ? " rp--b" : "")}>
       {/* Sentinel at the very top: once it scrolls past (header gone), the bar slides down */}
       <div ref={sentinelRef} className="rp-sb-sentinel" aria-hidden="true" />
 
@@ -595,7 +603,10 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
               <div className="rp-routine-plans">
                 <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("subscribe"); setAdded(false); }}>
                   <span className={"rp-radio" + (routinePlan === "subscribe" ? " on" : "")} />
-                  <span className="rp-plan-label">Subscribe &amp; Save</span>
+                  <span className="rp-plan-main">
+                    <span className="rp-plan-label">Subscribe &amp; Save</span>
+                    <span className="rp-plan-sub">Delivered every 30 days. Cancel anytime.</span>
+                  </span>
                   <span className="rp-plan-price">{money(subTotal)} <s>{money(oneTimeTotal)}</s></span>
                 </button>
                 <button type="button" className="rp-plan" onClick={() => { setRoutinePlan("onetime"); setAdded(false); }}>

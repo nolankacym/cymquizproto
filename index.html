@@ -564,10 +564,22 @@ header { position: sticky; top: 0; z-index: 40; }
 
 /* Variant B: routine-wide Subscribe/One-Time toggle inside the routine card. */
 .rp-routine-plans { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--q-stroke); padding-top: var(--sp-2); }
-.rp-routine-plans .rp-plan { padding: 8px 0; }
+.rp-routine-plans .rp-plan { padding: 8px 0; align-items: flex-start; }
+.rp-routine-plans .rp-radio { margin-top: 3px; flex: 0 0 auto; }
 .rp-routine-plans .rp-plan-label { font-size: var(--q-body-1); font-weight: 500; }
-.rp-routine-plans .rp-plan-price { font-size: var(--q-body-1); font-weight: 500; }
+.rp-routine-plans .rp-plan-price { font-size: var(--q-body-1); font-weight: 500; flex: 0 0 auto; }
 .rp-routine-plans .rp-plan-price s { font-weight: 400; color: var(--q-ink-60); }
+/* Subscribe row: label + "Delivered every 30 days…" subline stacked. */
+.rp-plan-main { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; text-align: left; }
+.rp-plan-sub { font-size: var(--q-caption); font-weight: 400; color: var(--q-ink-60); line-height: 1.35; }
+
+/* Variant B — "Select" affordance next to a card's checkbox. */
+.rp-select { display: inline-flex; align-items: center; gap: 8px; }
+.rp-select-label { font-size: var(--q-body-2); color: var(--q-ink); }
+.rp-check:disabled { cursor: default; }
+
+/* Variant B — tighten the gap between "Enhance your routine" and its cards. */
+.rp--b .rp-enhance-head { margin-bottom: -16px; }
 
 .rp-feedback-cta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .rp-feedback-link { background: none; border: 0; color: var(--q-green); text-decoration: underline; cursor: pointer; font-family: inherit; font-size: var(--q-body-2); padding: 0; }
@@ -1826,10 +1838,13 @@ function ProductCard({
   plan,
   qty,
   onPlan,
-  onQty
+  onQty,
+  locked,
+  selectLabel
 }) {
+  const checked = selected || locked; // locked (primary) is always in the routine
   return /*#__PURE__*/React.createElement("div", {
-    className: "rp-card" + (selected ? " is-selected" : "")
+    className: "rp-card" + (checked ? " is-selected" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "rp-card-media"
   }, /*#__PURE__*/React.createElement("img", {
@@ -1839,14 +1854,19 @@ function ProductCard({
     className: "rp-card-headrow"
   }, /*#__PURE__*/React.createElement("span", {
     className: "rp-badge rp-badge--" + badgeKind
-  }, badge), /*#__PURE__*/React.createElement("button", {
+  }, badge), /*#__PURE__*/React.createElement("div", {
+    className: "rp-select"
+  }, selectLabel ? /*#__PURE__*/React.createElement("span", {
+    className: "rp-select-label"
+  }, "Select") : null, /*#__PURE__*/React.createElement("button", {
     type: "button",
-    className: "rp-check" + (selected ? " on" : ""),
+    className: "rp-check" + (checked ? " on" : ""),
     role: "checkbox",
-    "aria-checked": selected,
-    "aria-label": selected ? "Remove from routine" : "Add to routine",
-    onClick: onToggle
-  }, selected ? I.check(16) : null)), /*#__PURE__*/React.createElement("h3", {
+    "aria-checked": checked,
+    "aria-label": locked ? "Included in your routine" : selected ? "Remove from routine" : "Add to routine",
+    disabled: locked,
+    onClick: locked ? undefined : onToggle
+  }, checked ? I.check(16) : null))), /*#__PURE__*/React.createElement("h3", {
     className: "rp-name"
   }, product.name), /*#__PURE__*/React.createElement("div", {
     className: "rp-price"
@@ -1998,6 +2018,7 @@ function ResultsPage({
   }
   function card(p) {
     const m = cardMeta[p.id];
+    const isPrimary = p.id === topMatch.id;
     return /*#__PURE__*/React.createElement(ProductCard, {
       key: p.id,
       product: p,
@@ -2008,11 +2029,13 @@ function ResultsPage({
       plan: plans[p.id],
       qty: qtys[p.id],
       onPlan: v => setPlan(p.id, v),
-      onQty: v => setQty(p.id, v)
+      onQty: v => setQty(p.id, v),
+      locked: VARIANT && isPrimary /* B: Top Match is permanent */,
+      selectLabel: VARIANT && !isPrimary /* B: "Select" next to the checkbox */
     });
   }
   return /*#__PURE__*/React.createElement("div", {
-    className: "rp"
+    className: "rp" + (VARIANT ? " rp--b" : "")
   }, /*#__PURE__*/React.createElement("div", {
     ref: sentinelRef,
     className: "rp-sb-sentinel",
@@ -2074,8 +2097,12 @@ function ResultsPage({
   }, /*#__PURE__*/React.createElement("span", {
     className: "rp-radio" + (routinePlan === "subscribe" ? " on" : "")
   }), /*#__PURE__*/React.createElement("span", {
+    className: "rp-plan-main"
+  }, /*#__PURE__*/React.createElement("span", {
     className: "rp-plan-label"
   }, "Subscribe & Save"), /*#__PURE__*/React.createElement("span", {
+    className: "rp-plan-sub"
+  }, "Delivered every 30 days. Cancel anytime.")), /*#__PURE__*/React.createElement("span", {
     className: "rp-plan-price"
   }, money(subTotal), " ", /*#__PURE__*/React.createElement("s", null, money(oneTimeTotal)))), /*#__PURE__*/React.createElement("button", {
     type: "button",

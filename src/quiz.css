@@ -549,10 +549,22 @@ header { position: sticky; top: 0; z-index: 40; }
 
 /* Variant B: routine-wide Subscribe/One-Time toggle inside the routine card. */
 .rp-routine-plans { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--q-stroke); padding-top: var(--sp-2); }
-.rp-routine-plans .rp-plan { padding: 8px 0; }
+.rp-routine-plans .rp-plan { padding: 8px 0; align-items: flex-start; }
+.rp-routine-plans .rp-radio { margin-top: 3px; flex: 0 0 auto; }
 .rp-routine-plans .rp-plan-label { font-size: var(--q-body-1); font-weight: 500; }
-.rp-routine-plans .rp-plan-price { font-size: var(--q-body-1); font-weight: 500; }
+.rp-routine-plans .rp-plan-price { font-size: var(--q-body-1); font-weight: 500; flex: 0 0 auto; }
 .rp-routine-plans .rp-plan-price s { font-weight: 400; color: var(--q-ink-60); }
+/* Subscribe row: label + "Delivered every 30 days…" subline stacked. */
+.rp-plan-main { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; text-align: left; }
+.rp-plan-sub { font-size: var(--q-caption); font-weight: 400; color: var(--q-ink-60); line-height: 1.35; }
+
+/* Variant B — "Select" affordance next to a card's checkbox. */
+.rp-select { display: inline-flex; align-items: center; gap: 8px; }
+.rp-select-label { font-size: var(--q-body-2); color: var(--q-ink); }
+.rp-check:disabled { cursor: default; }
+
+/* Variant B — tighten the gap between "Enhance your routine" and its cards. */
+.rp--b .rp-enhance-head { margin-bottom: -16px; }
 
 .rp-feedback-cta { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .rp-feedback-link { background: none; border: 0; color: var(--q-green); text-decoration: underline; cursor: pointer; font-family: inherit; font-size: var(--q-body-2); padding: 0; }
