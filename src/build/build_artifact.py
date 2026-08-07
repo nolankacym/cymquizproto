@@ -30,7 +30,7 @@ for path, uri in asset_map.items():
     app_js = app_js.replace(path, uri)
 
 # ---- fonts: minimal @font-face set (4 weights) as woff2 data URIs ----
-FONT_WEIGHTS = [("35XLt", 400), ("45Lt", 450), ("55Rg", 500), ("65Md", 700)]
+FONT_WEIGHTS = [("35XLt", 400), ("45Lt", 450), ("55Rg", 500), ("65Md", 700), ("75Bd", 800)]
 font_faces = "\n".join(
     "@font-face{font-family:'Neue Haas Grotesk Display Pro';font-style:normal;"
     f"font-weight:{w};font-display:swap;"
