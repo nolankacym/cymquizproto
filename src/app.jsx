@@ -625,14 +625,6 @@ function ResultsPage({ answers, onStartOver, onFeedback, saveState }) {
               disabled={routine.length === 0} onClick={() => setAdded(true)}>
               {added ? "✓ Added to Cart" : "Add Routine to Cart"}
             </button>
-            <div className="rp-feedback-cta">
-              <span className={"q-save q-save--" + saveState}>
-                {saveState === "saving" && "Saving your responses…"}
-                {saveState === "saved" && "✓ Your answers were saved"}
-                {saveState === "error" && "Couldn’t save your answers"}
-              </span>
-              <button className="rp-feedback-link" onClick={onFeedback}>Share quiz feedback</button>
-            </div>
           </div>
         </div>
       </div>

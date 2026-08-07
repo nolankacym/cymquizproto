@@ -531,7 +531,12 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-section-title { font-size: var(--q-h2); font-weight: 500; line-height: 1.3; letter-spacing: 0.1px; margin: 0; color: #222; }
 .rp-selectall { background: none; border: 0; cursor: pointer; font-family: inherit; font-size: var(--q-button); color: var(--q-green); text-decoration: underline; padding: 0; white-space: nowrap; }
 
-.rp-disclaimer { font-size: var(--q-body-2); font-weight: 400; line-height: 1.5; color: var(--q-ink-60); margin: 0; }
+/* Legal disclosure — caption/legal DS spec: Roman 450 + 0.01em tracking (not the
+   45-Light face). Constrained to the product-card column width on desktop. */
+.rp-disclaimer { font-size: var(--q-body-2); font-weight: 450; letter-spacing: 0.14px; line-height: 1.5; color: var(--q-ink-60); margin: 0; }
+@media (min-width: 1001px) {
+  .rp-disclaimer { max-width: calc(100% - 380px - var(--sp-4)); } /* align to the card column, not full width */
+}
 
 /* ---- build your routine (sidebar) ---- */
 /* Sticks just below the always-on-top navbar so it's never hidden behind it. */
@@ -556,7 +561,7 @@ header { position: sticky; top: 0; z-index: 40; }
 .rp-routine-plans .rp-plan-price s { font-weight: 400; color: var(--q-ink-60); }
 /* Subscribe row: label + "Delivered every 30 days…" subline stacked. */
 .rp-plan-main { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; text-align: left; }
-.rp-plan-sub { font-size: var(--q-caption); font-weight: 400; color: var(--q-ink-60); line-height: 1.35; }
+.rp-plan-sub { font-size: var(--q-caption); font-weight: 450; letter-spacing: 0.12px; color: var(--q-ink-60); line-height: 1.4; }
 
 /* Variant B — "Select" affordance next to a card's checkbox. */
 .rp-select { display: inline-flex; align-items: center; gap: 8px; }
